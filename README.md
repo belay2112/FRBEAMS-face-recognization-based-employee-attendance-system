@@ -50,7 +50,6 @@ A modern web application for managing employee attendance using facial recogniti
 
 5. **Access the application**
    - Open browser: http://localhost:5000
-   - Default login: admin / admin123
 
 ## 👥 User Roles
 
@@ -60,8 +59,6 @@ A modern web application for managing employee attendance using facial recogniti
 - **Employee**: Mark attendance and view personal records
 
 ## 📸 How to Use
-
-1. **Login** with your credentials
 2. **Click "Mark Attendance"** to open face recognition
 3. **Allow camera access** when prompted
 4. **Face detection** shows colored boxes:
@@ -110,8 +107,8 @@ Full-stack Developer specializing in facial recognition systems
 
 ## 📞 Contact
 
-- **Email**: frbeams@jinkauniversity.edu.et
-- **Phone**: +251 900 900 900
+- **Email**: belaye024@gmail.com
+- **Phone**: +251 915503487
 - **GitHub**: https://github.com/belay2112/FRBEAMS-face-recognization-based-employee-attendance-system
 
 ---
