@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export Functionality Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Export Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>HR Dashboard Export Test</h2>
+        <button onclick="testHRAttendanceExport()">Test Attendance Export</button>
+        <button onclick="testHREmployeeExport()">Test Employee Export</button>
+        <button onclick="testHRLeaveExport()">Test Leave Export</button>
+        <button onclick="testHRPerformanceExport()">Test Performance Export</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Finance Dashboard Export Test</h2>
+        <button onclick="testFinanceAttendanceExport()">Test Attendance Export</button>
+        <button onclick="testFinanceSalaryExport()">Test Salary Export</button>
+        <button onclick="testFinanceExpenseExport()">Test Expense Export</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Department Dashboard Export Test</h2>
+        <button onclick="testDepartmentAttendanceExport()">Test Attendance Export</button>
+        <button onclick="testDepartmentSummaryExport()">Test Summary Export</button>
+        <button onclick="testDepartmentEmployeeExport()">Test Employee Export</button>
+    </div>
+
+    <script>
+        // HR Export Functions
+        function testHRAttendanceExport() {
+            const csvContent = 'Employee ID,Name,Department,Date,Check In,Check Out,Status,Work Hours\nEMP001,John Doe,IT,2024-04-07,09:00,17:30,present,8.5\nEMP002,Jane Smith,HR,2024-04-07,08:45,17:15,present,8.5';
+            downloadCSV(csvContent, 'attendance_report_daily_2024-04-14.csv');
+        }
+        
+        function testHREmployeeExport() {
+            const csvContent = 'Employee ID,First Name,Last Name,Email,Department,Position,Hire Date,Salary,Status\nEMP001,John,Doe,john.doe@company.com,IT,Software Engineer,2023-01-15,75000,Active';
+            downloadCSV(csvContent, 'employee_report_daily_2024-04-14.csv');
+        }
+        
+        function testHRLeaveExport() {
+            const csvContent = 'Employee ID,Name,Department,Leave Type,Start Date,End Date,Days,Status,Reason\nEMP001,John Doe,IT,Annual,2024-04-10,2024-04-12,3,Approved,Family vacation';
+            downloadCSV(csvContent, 'leave_report_daily_2024-04-14.csv');
+        }
+        
+        function testHRPerformanceExport() {
+            const csvContent = 'Employee ID,Name,Department,Position,Attendance Rate,Performance Score,Rating\nEMP001,John Doe,IT,Software Engineer,95.5%,85,Excellent';
+            downloadCSV(csvContent, 'performance_report_daily_2024-04-14.csv');
+        }
+        
+        // Finance Export Functions
+        function testFinanceAttendanceExport() {
+            const csvContent = 'Department,Employees,Present Days,Absent Days,Attendance Rate\nIT,3,85,5,94.4%\nHR,3,88,2,97.8%';
+            downloadCSV(csvContent, 'finance_attendance_report_daily_2024-04-14.csv');
+        }
+        
+        function testFinanceSalaryExport() {
+            const csvContent = 'Department,Employees,Total Salary,Average Salary,Payroll Date\nIT,3,210000,70000,April 30, 2024\nHR,3,195000,65000,April 30, 2024';
+            downloadCSV(csvContent, 'finance_salary_report_daily_2024-04-14.csv');
+        }
+        
+        function testFinanceExpenseExport() {
+            const csvContent = 'Category,Description,Amount,Date\nSalaries,Monthly payroll for all departments,615000,April 30, 2024\nOffice Supplies,Stationery, equipment, utilities,45000,April 30, 2024';
+            downloadCSV(csvContent, 'finance_expense_report_daily_2024-04-14.csv');
+        }
+        
+        // Department Export Functions
+        function testDepartmentAttendanceExport() {
+            const csvContent = 'Department,Employees,Present Days,Absent Days,Attendance Rate\nIT,3,85,5,94.4%\nHR,3,88,2,97.8%\nFinance,3,87,3,96.7%';
+            downloadCSV(csvContent, 'department_attendance_report_daily_2024-04-14.csv');
+        }
+        
+        function testDepartmentSummaryExport() {
+            const csvContent = 'Department,Total Employees,Present Today,Absent Today,Attendance Rate,Average Work Hours\nIT,3,3,0,100%,8.5\nHR,3,2,1,66.7%,8.2';
+            downloadCSV(csvContent, 'department_summary_report_daily_2024-04-14.csv');
+        }
+        
+        function testDepartmentEmployeeExport() {
+            const csvContent = 'Department,Employee ID,Name,Position,Hire Date,Status,Total Attendance Days,Average Daily Hours\nIT,EMP001,John Doe,Software Engineer,2023-01-15,Active,85,8.5';
+            downloadCSV(csvContent, 'department_employee_report_daily_2024-04-14.csv');
+        }
+        
+        // Universal CSV download function
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert(`File exported successfully: ${filename}`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRBEAMS - Facial Recognition Attendance System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .card-body {
+            padding: 40px;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .status {
+            background: #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="title">🎯 FRBEAMS</div>
+                <div class="subtitle">Facial Recognition Based Employee Attendance Management System</div>
+            </div>
+            <div class="card-body">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div class="icon">👤</div>
+                    <h2>Welcome to FRBEAMS</h2>
+                    <p>Automated employee attendance management using facial recognition technology</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+                    <div class="feature-card">
+                        <div class="icon">📷</div>
+                        <h3>Employee Portal</h3>
+                        <p>Mark your attendance using facial recognition</p>
+                        <button class="btn btn-success" onclick="startFaceAttendance()">
+                            📷 Start Attendance
+                        </button>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="icon">🔐</div>
+                        <h3>Admin Portal</h3>
+                        <p>Access system administration and reports</p>
+                        <a href="/login" class="btn btn-primary">
+                            🔐 Admin Login
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="icon">😊</div>
+                        <h4>Face Recognition</h4>
+                        <p>Real-time face detection and recognition</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">⏰</div>
+                        <h4>Real-time Tracking</h4>
+                        <p>Automatic check-in and check-out</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📊</div>
+                        <h4>Reports & Analytics</h4>
+                        <p>Comprehensive attendance reports</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🛡️</div>
+                        <h4>Secure System</h4>
+                        <p>Role-based access control</p>
+                    </div>
+                </div>
+                
+                <div id="status" class="status" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Face Recognition Modal -->
+    <div id="faceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>📷 Mark Attendance</h2>
+            <div style="text-align: center; margin: 20px 0;">
+                <video id="videoElement" autoplay style="width: 100%; max-width: 400px; border-radius: 10px; background: #000;"></video>
+            </div>
+            <div id="attendanceStatus" class="status"></div>
+            <div style="text-align: center;">
+                <button class="btn btn-success" onclick="captureAttendance()">
+                    📸 Mark Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let video = document.getElementById('videoElement');
+        let stream = null;
+        
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status ' + type;
+            statusDiv.innerHTML = message;
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function startFaceAttendance() {
+            document.getElementById('faceModal').style.display = 'block';
+            
+            // Start camera
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function(s) {
+                        stream = s;
+                        video.srcObject = stream;
+                    })
+                    .catch(function(err) {
+                        showStatus('❌ Camera access denied. Please allow camera access.', 'error');
+                    });
+            } else {
+                showStatus('❌ Camera not supported in this browser.', 'error');
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('faceModal').style.display = 'none';
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        }
+        
+        async function captureAttendance() {
+            if (!stream) {
+                showStatus('Camera not initialized', 'error');
+                return;
+            }
+            
+            // Show processing status
+            const statusDiv = document.getElementById('attendanceStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status';
+            statusDiv.innerHTML = 'Processing face recognition...';
+            
+            try {
+                // Create canvas to capture image
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0);
+                
+                // Convert to base64
+                const imageData = canvas.toDataURL('image/jpeg');
+                
+                // Call the face recognition API
+                const response = await fetch('/api/face_attendance/capture', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image: imageData
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = `
+                        Attendance marked successfully!<br>
+                        <small>Employee: ${data.employee.name} (${data.employee.employee_id})</small><br>
+                        <small>Type: ${data.type === 'check_in' ? 'Check In' : 'Check Out'}</small>
+                    `;
+                    
+                    setTimeout(() => {
+                        closeModal();
+                        showStatus(`${data.message}`, 'success');
+                    }, 3000);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = `
+                        <i class="fas fa-exclamation-triangle fa-3x mb-2"></i>
+                        <h4>Face Recognition Failed</h4>
+                        <p>${data.error}</p>
+                    `;
+                }
+                
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle fa-3x mb-2"></i>
+                    <h4>System Error</h4>
+                    <p>Network error: ${error.message}</p>
+                `;
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('faceModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+        // Initialize page
+        window.onload = function() {
+            showStatus('🚀 FRBEAMS loaded successfully!', 'success');
+        };
+    </script>
+</body>
+</html>

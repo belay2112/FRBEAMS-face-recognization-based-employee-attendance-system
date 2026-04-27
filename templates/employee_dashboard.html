@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard - FRBEAMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-section h3 {
+            color: #764ba2;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #764ba2;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .table th,
+        .table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .table tr:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .face-status-container {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            gap: 1.5rem;
+        }
+        
+        .face-status-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .face-status-icon.registered {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .face-status-icon.not-registered {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .face-status-icon.checking {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .face-status-info {
+            flex: 1;
+        }
+        
+        .face-status-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+        
+        .face-status-info p {
+            margin: 0 0 1rem 0;
+            color: #666;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+    </style>
+        
+        <style>
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="logo">FRBEAMS</div>
+            
+            <div class="user-info">
+                <div style="font-weight: bold;">Employee</div>
+                <div style="font-size: 0.9rem;">{{ current_user.username }}</div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>My Dashboard</h3>
+                <a href="#dashboard" class="menu-item" onclick="showSection('dashboard')">
+                    <i></i> My Dashboard
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Attendance</h3>
+                <a href="#my-attendance" class="menu-item" onclick="showSection('my-attendance')">
+                    <i></i> View Attendance
+                </a>
+                <a href="#change-password" class="menu-item" onclick="showSection('change-password')">
+                    <i></i> Change Password
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Face Recognition</h3>
+                <a href="#register-face" class="menu-item" onclick="showSection('register-face')">
+                    <i></i> Register Face
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>System</h3>
+                <a href="/logout" class="menu-item">
+                    <i></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div>
+                    <h1>Employee Dashboard</h1>
+                    <p>Welcome to your personal dashboard</p>
+                </div>
+                <div class="user-info">
+                    <div style="font-weight: bold;">{{ current_user.username }}</div>
+                    <div style="font-size: 0.9rem;">Employee</div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div id="dashboard-section">
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="daysPresent">-</div>
+                        <div class="stat-label">Days Present</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="totalHours">-</div>
+                        <div class="stat-label">Total Hours</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="avgHours">-</div>
+                        <div class="stat-label">Avg Daily Hours</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="leaveBalance">-</div>
+                        <div class="stat-label">Leave Balance</div>
+                    </div>
+                </div>
+                
+                <!-- Face Registration Status -->
+                <div class="content-card">
+                    <div class="card-header">Face Registration Status</div>
+                    <div id="faceRegistrationStatus">
+                        <div class="face-status-container">
+                            <div class="face-status-icon" id="faceStatusIcon">
+                                <i class="icon">??</i>
+                            </div>
+                            <div class="face-status-info">
+                                <h4 id="faceStatusTitle">Checking Face Registration...</h4>
+                                <p id="faceStatusMessage">Please wait while we check your face registration status.</p>
+                                <button class="btn btn-primary" id="registerFaceBtn" onclick="showSection('register-face')" style="display: none;">
+                                    ?? Register Your Face
+                                </button>
+                                <button class="btn btn-success" id="reRegisterFaceBtn" onclick="showSection('register-face')" style="display: none;">
+                                    ?? Update Face Registration
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="content-card">
+                    <div class="card-header">Recent Attendance</div>
+                    <div id="recentAttendance" class="loading">Loading attendance data...</div>
+                    <table class="table" id="attendanceTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                                <th>Work Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceBody">
+                            <!-- Attendance data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- My Attendance Section -->
+            <div id="my-attendance-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">My Attendance History</div>
+                    <button class="btn btn-info" onclick="loadMyAttendance()">Refresh</button>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                                <th>Work Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myAttendanceBody">
+                            <!-- Attendance data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Change Password Section -->
+            <div id="change-password-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Change Password</div>
+                    <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                        <button type="button" class="btn" onclick="showSection('dashboard')">Cancel</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Register Face Section -->
+            <div id="register-face-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Register Face</div>
+                    <div style="text-align: center; padding: 2rem;">
+                        <video id="faceVideo" autoplay style="width: 100%; max-width: 400px; border-radius: 10px; background: #000;"></video>
+                    </div>
+                    <div id="faceStatus" class="loading" style="display: none;"></div>
+                    <div style="text-align: center;">
+                        <button type="button" class="btn btn-primary" onclick="startFaceRegistration()">?? Start Camera</button>
+                        <button type="button" class="btn btn-success" onclick="captureFace()">?? Capture Face</button>
+                        <button type="button" class="btn" onclick="showSection('dashboard')">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Show/hide sections
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = ['dashboard', 'my-attendance', 'change-password', 'register-face'];
+            sections.forEach(section => {
+                const sectionElement = document.getElementById(section + '-section');
+                if (sectionElement) {
+                    sectionElement.style.display = 'none';
+                }
+            });
+            
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId + '-section');
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+            
+            // Load data based on section
+            if (sectionId === 'dashboard') {
+                loadDashboardData();
+            } else if (sectionId === 'my-attendance') {
+                loadMyAttendance();
+            }
+        }
+        
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load attendance data
+                const attendanceResponse = await fetch('/api/my-attendance');
+                const attendanceData = await attendanceResponse.json();
+                
+                if (!attendanceResponse.ok) {
+                    if (attendanceData.error) {
+                        showErrorMessage(attendanceData.error);
+                        return;
+                    }
+                    throw new Error('Failed to load attendance data');
+                }
+                
+                // Calculate statistics from real data
+                const daysPresent = attendanceData.filter(record => record.status === 'present').length;
+                const totalHours = attendanceData.reduce((sum, record) => sum + (record.work_hours || 0), 0);
+                const avgHours = daysPresent > 0 ? (totalHours / daysPresent).toFixed(1) : '0.0';
+                
+                document.getElementById('daysPresent').textContent = daysPresent;
+                document.getElementById('totalHours').textContent = totalHours.toFixed(1);
+                document.getElementById('avgHours').textContent = avgHours;
+                document.getElementById('leaveBalance').textContent = '12'; // Simulated leave balance
+                
+                // Load face registration status
+                await loadFaceRegistrationStatus();
+                
+                // Load recent attendance
+                const tbody = document.getElementById('attendanceBody');
+                tbody.innerHTML = '';
+                
+                attendanceData.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${record.date}</td>
+                        <td>${record.check_in}</td>
+                        <td>${record.check_out}</td>
+                        <td><span class="badge badge-success">${record.status}</span></td>
+                        <td>${record.work_hours}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                document.getElementById('recentAttendance').style.display = 'none';
+                document.getElementById('attendanceTable').style.display = 'table';
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        // Load my attendance
+        async function loadMyAttendance() {
+            try {
+                const response = await fetch('/api/my-attendance');
+                const attendanceData = await response.json();
+                
+                if (!response.ok) {
+                    if (attendanceData.error) {
+                        showErrorMessage(attendanceData.error);
+                        return;
+                    }
+                    throw new Error('Failed to load attendance data');
+                }
+                
+                const tbody = document.getElementById('myAttendanceBody');
+                tbody.innerHTML = '';
+                
+                if (attendanceData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No attendance records found.</td></tr>';
+                    return;
+                }
+                
+                attendanceData.forEach(record => {
+                    const row = document.createElement('tr');
+                    const statusClass = record.status === 'present' ? 'badge-success' : 
+                                     record.status === 'absent' ? 'badge-danger' : 
+                                     record.status === 'late' ? 'badge-warning' : 'badge-info';
+                    
+                    row.innerHTML = `
+                        <td>${record.date}</td>
+                        <td>${record.check_in_time || 'N/A'}</td>
+                        <td>${record.check_out_time || 'N/A'}</td>
+                        <td><span class="badge ${statusClass}">${record.status}</span></td>
+                        <td>${record.work_hours || 'N/A'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading attendance data:', error);
+                showErrorMessage('Error loading attendance data: ' + error.message);
+            }
+        }
+        
+        // Handle password change
+        function handleChangePassword(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            if (data.newPassword !== data.confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+            
+            if (data.newPassword.length < 6) {
+                alert('Password must be at least 6 characters long!');
+                return;
+            }
+            
+            // Simulate password change
+            alert('Password changed successfully!');
+            event.target.reset();
+            showSection('dashboard');
+        }
+        
+        // Face registration
+        let stream = null;
+        
+        async function startFaceRegistration() {
+            try {
+                const video = document.getElementById('faceVideo');
+                const status = document.getElementById('faceStatus');
+                
+                // Start camera
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        facingMode: 'user'
+                    } 
+                });
+                
+                video.srcObject = stream;
+                status.style.display = 'block';
+                status.className = 'loading';
+                status.textContent = 'Camera started. Position your face in the frame and click "Capture Face".';
+                
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                showErrorMessage('Camera access denied: ' + err.message);
+            }
+        }
+        
+        async function captureFace() {
+            try {
+                const video = document.getElementById('faceVideo');
+                const status = document.getElementById('faceStatus');
+                
+                if (!stream) {
+                    showErrorMessage('Please start the camera first');
+                    return;
+                }
+                
+                // Create canvas to capture image
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+                
+                // Convert to blob
+                canvas.toBlob(async (blob) => {
+                    const formData = new FormData();
+                    formData.append('image', blob, 'face.jpg');
+                    
+                    status.className = 'loading';
+                    status.textContent = 'Processing face image...';
+                    
+                    try {
+                        const response = await fetch('/api/my-face', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.success) {
+                            status.className = 'success';
+                            status.textContent = result.message;
+                            showSuccessMessage(result.message);
+                            
+                            // Stop camera after successful registration
+                            stopCamera();
+                            
+                            // Close modal after 2 seconds and refresh status
+                            setTimeout(() => {
+                                showSection('dashboard');
+                                loadFaceRegistrationStatus(); // Refresh face status
+                            }, 2000);
+                        } else {
+                            status.className = 'error';
+                            status.textContent = result.error || 'Error registering face';
+                            showErrorMessage(result.error || 'Error registering face');
+                        }
+                    } catch (error) {
+                        status.className = 'error';
+                        status.textContent = 'Error uploading face: ' + error.message;
+                        showErrorMessage('Error uploading face: ' + error.message);
+                    }
+                }, 'image/jpeg', 0.9);
+                
+            } catch (error) {
+                console.error('Error capturing face:', error);
+                showErrorMessage('Error capturing face: ' + error.message);
+            }
+        }
+        
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                const video = document.getElementById('faceVideo');
+                video.srcObject = null;
+            }
+        }
+        
+        // Stop camera when leaving face registration section
+        function showSection(sectionId) {
+            // Stop camera if leaving face registration
+            if (sectionId !== 'register-face') {
+                stopCamera();
+            }
+            
+            // Hide all sections
+            const sections = ['dashboard', 'my-attendance', 'change-password', 'register-face'];
+            sections.forEach(section => {
+                const sectionElement = document.getElementById(section + '-section');
+                if (sectionElement) {
+                    sectionElement.style.display = 'none';
+                }
+            });
+            
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId + '-section');
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+            
+            // Load data based on section
+            if (sectionId === 'dashboard') {
+                loadDashboardData();
+            } else if (sectionId === 'my-attendance') {
+                loadMyAttendance();
+            }
+        }
+        
+        // Message display functions
+        function showSuccessMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'alert alert-success';
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 15px 20px;
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                min-width: 300px;
+                animation: slideIn 0.3s ease-out;
+            `;
+            messageDiv.innerHTML = `
+                <strong>Success!</strong> ${message}
+                <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; font-size: 16px; cursor: pointer;">&times;</button>
+            `;
+            document.body.appendChild(messageDiv);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        function showErrorMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'alert alert-danger';
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                padding: 15px 20px;
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                min-width: 300px;
+                animation: slideIn 0.3s ease-out;
+            `;
+            messageDiv.innerHTML = `
+                <strong>Error!</strong> ${message}
+                <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; font-size: 16px; cursor: pointer;">&times;</button>
+            `;
+            document.body.appendChild(messageDiv);
+            
+            // Auto-remove after 8 seconds
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, 8000);
+        }
+        
+        // Load face registration status
+        async function loadFaceRegistrationStatus() {
+            try {
+                const response = await fetch('/api/my-face-status');
+                const statusData = await response.json();
+                
+                if (!response.ok) {
+                    if (statusData.error) {
+                        console.error('Error loading face status:', statusData.error);
+                        return;
+                    }
+                    throw new Error('Failed to load face status');
+                }
+                
+                const icon = document.getElementById('faceStatusIcon');
+                const title = document.getElementById('faceStatusTitle');
+                const message = document.getElementById('faceStatusMessage');
+                const registerBtn = document.getElementById('registerFaceBtn');
+                const reRegisterBtn = document.getElementById('reRegisterFaceBtn');
+                
+                if (statusData.is_registered) {
+                    // Face is registered
+                    icon.className = 'face-status-icon registered';
+                    icon.innerHTML = '??';
+                    title.textContent = 'Face Registered';
+                    message.textContent = `Your face was registered on ${statusData.registration_date || 'Unknown date'}. You can use face recognition for attendance marking.`;
+                    registerBtn.style.display = 'none';
+                    reRegisterBtn.style.display = 'inline-block';
+                } else {
+                    // Face is not registered
+                    icon.className = 'face-status-icon not-registered';
+                    icon.innerHTML = '??';
+                    title.textContent = 'Face Not Registered';
+                    message.textContent = 'You have not registered your face yet. Register your face to use face recognition for attendance marking.';
+                    registerBtn.style.display = 'inline-block';
+                    reRegisterBtn.style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error('Error loading face registration status:', error);
+                const icon = document.getElementById('faceStatusIcon');
+                const title = document.getElementById('faceStatusTitle');
+                const message = document.getElementById('faceStatusMessage');
+                
+                icon.className = 'face-status-icon';
+                icon.innerHTML = '??';
+                title.textContent = 'Status Unknown';
+                message.textContent = 'Unable to check face registration status. Please try again later.';
+            }
+        }
+        
+        // Load dashboard data on page load
+        window.onload = function() {
+            loadDashboardData();
+        };
+    </script>
+</body>
+</html>

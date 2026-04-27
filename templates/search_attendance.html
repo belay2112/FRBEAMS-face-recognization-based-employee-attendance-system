@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Attendance - FRBEAMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.1);
+            overflow-y: auto;
+            border-right: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-section h3 {
+            color: #007bff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .menu-item:hover {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+        
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.1);
+            border: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .page-title {
+            color: #007bff;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        /* Enhanced Filter Container Styles */
+        .filter-container {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 123, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+        }
+        
+        .filter-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .filter-header h3 {
+            margin: 0 0 0.5rem 0;
+            color: #007bff;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .filter-header p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+        
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+        
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+                
+        /* Status Badge Enhancements */
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+        
+        .badge-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+            color: #333;
+        }
+        
+        .badge-info {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+            color: white;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 2px dashed #e9ecef;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #007bff;
+        }
+        
+        .empty-state h4 {
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+        
+        .empty-state p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Alert Styles */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+        
+        .alert-error {
+            background: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+        
+        /* Search Form Specific Styles */
+        .search-form {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 123, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+        }
+        
+        .search-form h3 {
+            color: #007bff;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .search-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+        
+        .search-group input,
+        .search-group select {
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .search-group input:focus,
+        .search-group select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        .search-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        /* Excel-like Attendance Table Styles */
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid rgba(0, 123, 255, 0.1);
+            border-radius: 12px 12px 0 0;
+            margin-bottom: 0;
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            color: #007bff;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .record-count {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+        }
+        
+        .table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            border: 2px solid #4CAF50 !important;
+            font-family: Arial, sans-serif !important;
+            background: white !important;
+            display: table !important;
+        }
+        
+        .table thead {
+            background-color: #4CAF50 !important;
+        }
+        
+        .table thead th {
+            border: 1px solid #4CAF50 !important;
+            padding: 12px 8px !important;
+            text-align: left !important;
+            font-weight: bold !important;
+            color: white !important;
+            font-size: 14px !important;
+            background-color: #4CAF50 !important;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid #ddd !important;
+        }
+        
+        .table tbody td {
+            border: 1px solid #ddd !important;
+            padding: 10px 8px !important;
+            text-align: left !important;
+            font-size: 13px !important;
+            vertical-align: middle !important;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f5f5f5 !important;
+        }
+        
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9 !important;
+        }
+        
+        .table .badge {
+            padding: 4px 8px !important;
+            border-radius: 4px !important;
+            font-size: 11px !important;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+            display: inline-block !important;
+            text-align: center !important;
+            min-width: 60px !important;
+        }
+        
+        .table .badge-success {
+            background-color: #28a745 !important;
+            color: white !important;
+        }
+        
+        .table .badge-danger {
+            background-color: #dc3545 !important;
+            color: white !important;
+        }
+        
+        .table .badge-warning {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
+        
+        .table .badge-info {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+        
+        /* Force table display */
+        #searchTable {
+            display: table !important;
+            width: 100% !important;
+        }
+        
+        #searchResultsBody {
+            display: table-row-group !important;
+        }
+        
+        #searchResultsBody tr {
+            display: table-row !important;
+        }
+        
+        #searchResultsBody td {
+            display: table-cell !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="logo">FRBEAMS</div>
+            
+            <div class="user-info">
+                <div style="font-weight: bold;">{{ current_user.username }}</div>
+                <div style="font-size: 0.9rem;">HR Officer</div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Navigation</h3>
+                <a href="/hr_dashboard" class="menu-item">
+                    <i></i> HR Dashboard
+                </a>
+                <a href="/view_attendance" class="menu-item">
+                    <i></i> View Attendance
+                </a>
+                <a href="/search_attendance" class="menu-item active">
+                    <i></i> Search Attendance
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>System</h3>
+                <a href="/change_password" class="menu-item">
+                    <i></i> Change Password
+                </a>
+                <a href="/logout" class="menu-item">
+                    <i></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div>
+                    <h1 class="page-title">Search Attendance Records</h1>
+                    <p style="color: #6c757d; margin-top: 0.5rem;">Search and filter specific attendance records</p>
+                </div>
+                <div class="user-info">
+                    <div style="font-weight: bold;">{{ current_user.username }}</div>
+                    <div style="font-size: 0.9rem;">HR Officer</div>
+                </div>
+            </div>
+            
+            <!-- Search Form -->
+            <div class="search-form">
+                <h3><i>?</i> Search Attendance</h3>
+                
+                <div class="search-grid">
+                    <div class="search-group">
+                        <label for="searchEmployee">Employee Name/ID</label>
+                        <input type="text" id="searchEmployee" placeholder="Enter employee name or ID">
+                    </div>
+                    
+                    <div class="search-group">
+                        <label for="searchDate">Date</label>
+                        <input type="date" id="searchDate">
+                    </div>
+                    
+                    <div class="search-group">
+                        <label for="searchStatus">Status</label>
+                        <select id="searchStatus">
+                            <option value="">All Status</option>
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="late">Late</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="search-buttons">
+                    <button class="btn btn-primary" onclick="searchAttendanceRecords()">
+                        <i>?</i> Search Records
+                    </button>
+                    <button class="btn btn-warning" onclick="clearSearch()">
+                        <i>?</i> Clear Search
+                    </button>
+                </div>
+            </div>
+    </div>
+    
+    <script>
+        // Search attendance records
+        async function searchAttendanceRecords() {
+            const employee = document.getElementById('searchEmployee').value;
+            const date = document.getElementById('searchDate').value;
+            const status = document.getElementById('searchStatus').value;
+            
+            console.log(`Searching attendance for: Employee=${employee || 'All'}, Date=${date || 'All'}, Status=${status || 'All'}`);
+            
+            try {
+                // Build query parameters
+                const params = new URLSearchParams();
+                if (employee) params.append('employee', employee);
+                if (date) params.append('date', date);
+                if (status && status !== 'all') params.append('status', status);
+                
+                const response = await fetch(`/api/attendance/search?${params.toString()}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Show results table and populate it
+                    showSearchResults(data);
+                    showSuccessMessage(`Found ${data.length} attendance records`);
+                } else {
+                    showErrorMessage('Error searching attendance records');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                showErrorMessage('Error searching attendance records: ' + error.message);
+            }
+        }
+        
+        // Clear search
+        function clearSearch() {
+            document.getElementById('searchEmployee').value = '';
+            document.getElementById('searchDate').value = '';
+            document.getElementById('searchStatus').value = '';
+            
+            // Hide results table
+            hideSearchResults();
+            
+            showSuccessMessage('Search cleared');
+        }
+        
+        // Show search results table
+        function showSearchResults(data) {
+            // Create results table if it doesn't exist
+            let resultsContainer = document.getElementById('searchResultsContainer');
+            if (!resultsContainer) {
+                resultsContainer = document.createElement('div');
+                resultsContainer.id = 'searchResultsContainer';
+                resultsContainer.innerHTML = `
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Search Results</h3>
+                            <span id="searchRecordCount" class="record-count">Loading...</span>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table" id="searchTable">
+                                <thead>
+                                    <tr>
+                                        <th>Employee ID</th>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Status</th>
+                                        <th>Work Hours</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="searchResultsBody">
+                                    <!-- Search results will be displayed here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                
+                // Add after search form
+                const searchForm = document.querySelector('.search-form');
+                searchForm.parentNode.insertBefore(resultsContainer, searchForm.nextSibling);
+            }
+            
+            // Update record count
+            const recordCount = document.getElementById('searchRecordCount');
+            recordCount.textContent = `${data.length} results`;
+            
+            // Populate results
+            const tbody = document.getElementById('searchResultsBody');
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i>?</i>
+                                <h4>No Results Found</h4>
+                                <p>No attendance records found matching your search criteria. Try adjusting your search terms.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            data.forEach(record => {
+                const row = document.createElement('tr');
+                const statusClass = record.status === 'present' ? 'badge-success' : 
+                                 record.status === 'absent' ? 'badge-danger' : 
+                                 record.status === 'late' ? 'badge-warning' : 'badge-info';
+                
+                row.innerHTML = `
+                    <td>${record.employee_id}</td>
+                    <td>${record.employee_name}</td>
+                    <td>${record.date}</td>
+                    <td>${record.check_in_time || 'N/A'}</td>
+                    <td>${record.check_out_time || 'N/A'}</td>
+                    <td><span class="badge ${statusClass}">${record.status}</span></td>
+                    <td>${record.work_hours}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Hide search results table
+        function hideSearchResults() {
+            const resultsContainer = document.getElementById('searchResultsContainer');
+            if (resultsContainer) {
+                resultsContainer.remove();
+            }
+        }
+        
+        // Show success message
+        function showSuccessMessage(message) {
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.textContent = message;
+            
+            // Insert at top of main content
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(alert, mainContent.firstChild);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+        
+        // Show error message
+        function showErrorMessage(message) {
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-error';
+            alert.textContent = message;
+            
+            // Insert at top of main content
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(alert, mainContent.firstChild);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+        
+        // Load data on page load
+        window.onload = function() {
+            // Page is ready for searching
+            console.log('Search attendance page loaded');
+        };
+    </script>
+</body>
+</html>

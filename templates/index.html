@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}FRBEAMS - Facial Recognition Attendance System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-100">
+    <div class="col-md-8">
+        <div class="card shadow-lg">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-check fa-4x text-primary mb-3"></i>
+                    <h1 class="display-5 fw-bold">FRBEAMS</h1>
+                    <p class="lead text-muted">Facial Recognition Based Employee Attendance Management System</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-sign-in-alt fa-3x text-success mb-3"></i>
+                                <h4>Employee Login</h4>
+                                <p class="text-muted">Mark your attendance using facial recognition</p>
+                                <button class="btn btn-success btn-lg" onclick="startFaceAttendance()">
+                                    <i class="fas fa-camera"></i> Start Attendance
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
+                                <h4>Admin Login</h4>
+                                <p class="text-muted">Access system administration</p>
+                                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-lock"></i> Admin Portal
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <h5 class="text-center mb-4">System Features</h5>
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            <i class="fas fa-face-smile fa-2x text-info"></i>
+                            <p class="small mt-2">Face Recognition</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <i class="fas fa-clock fa-2x text-warning"></i>
+                            <p class="small mt-2">Real-time Tracking</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <i class="fas fa-chart-line fa-2x text-success"></i>
+                            <p class="small mt-2">Reports & Analytics</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-3">
+                            <i class="fas fa-shield-alt fa-2x text-danger"></i>
+                            <p class="small mt-2">Secure System</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Face Recognition Modal -->
+<div class="modal fade" id="faceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mark Attendance</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="camera-container">
+                    <video id="videoElement" autoplay></video>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                    <div class="face-recognition-overlay"></div>
+                </div>
+                
+                <div id="attendanceStatus" class="mt-3"></div>
+                
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Processing...</span>
+                    </div>
+                    <p class="mt-2">Recognizing face...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="captureAttendance()">
+                    <i class="fas fa-camera"></i> Mark Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let video = document.getElementById('videoElement');
+let canvas = document.getElementById('canvas');
+let context = canvas.getContext('2d');
+let stream = null;
+
+function startFaceAttendance() {
+    const modal = new bootstrap.Modal(document.getElementById('faceModal'));
+    modal.show();
+    
+    // Start camera
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(s) {
+                stream = s;
+                video.srcObject = stream;
+            })
+            .catch(function(err) {
+                showAlert('Camera access denied. Please allow camera access.', 'danger');
+            });
+    }
+}
+
+function captureAttendance() {
+    if (!stream) {
+        showAlert('Camera not initialized', 'danger');
+        return;
+    }
+    
+    // Show loading
+    document.querySelector('.loading-spinner').style.display = 'block';
+    document.getElementById('attendanceStatus').innerHTML = '';
+    
+    // Capture image
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert to base64
+    const imageData = canvas.toDataURL('image/jpeg');
+    
+    // Send to server
+    apiCall('/api/attendance/mark', {
+        method: 'POST',
+        body: JSON.stringify({ image: imageData })
+    })
+    .then(data => {
+        if (data.success) {
+            const statusDiv = document.getElementById('attendanceStatus');
+            statusDiv.className = 'attendance-status attendance-success';
+            statusDiv.innerHTML = `
+                <i class="fas fa-check-circle fa-3x mb-2"></i>
+                <h4>${data.message}</h4>
+                <p>Type: ${data.type === 'check_in' ? 'Check In' : 'Check Out'}</p>
+                ${data.employee ? `<p>Employee: ${data.employee.name} (${data.employee.employee_id})</p>` : ''}
+            `;
+            
+            // Close modal after 3 seconds
+            setTimeout(() => {
+                bootstrap.Modal.getInstance(document.getElementById('faceModal')).hide();
+            }, 3000);
+        }
+    })
+    .catch(error => {
+        const statusDiv = document.getElementById('attendanceStatus');
+        statusDiv.className = 'attendance-status attendance-error';
+        statusDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle fa-3x mb-2"></i>
+            <h4>Error</h4>
+            <p>${error.message}</p>
+        `;
+    })
+    .finally(() => {
+        document.querySelector('.loading-spinner').style.display = 'none';
+    });
+}
+
+// Cleanup camera when modal is closed
+document.getElementById('faceModal').addEventListener('hidden.bs.modal', function () {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    document.getElementById('attendanceStatus').innerHTML = '';
+    document.querySelector('.loading-spinner').style.display = 'none';
+});
+</script>
+{% endblock %}

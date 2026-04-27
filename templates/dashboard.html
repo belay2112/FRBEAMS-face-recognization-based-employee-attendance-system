@@ -1,0 +1,624 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FRBEAMS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container-fluid">
+        <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+        <p class="lead mb-0">Welcome back, {{ current_user.username }}!</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title mb-0" id="totalEmployees">0</h3>
+                        <p class="card-text">Total Employees</p>
+                    </div>
+                    <i class="fas fa-users fa-2x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title mb-0" id="presentToday">0</h3>
+                        <p class="card-text">Present Today</p>
+                    </div>
+                    <i class="fas fa-user-check fa-2x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title mb-0" id="absentToday">0</h3>
+                        <p class="card-text">Absent Today</p>
+                    </div>
+                    <i class="fas fa-user-times fa-2x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title mb-0" id="attendanceRate">0%</h3>
+                        <p class="card-text">Attendance Rate</p>
+                    </div>
+                    <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions and Recent Activity -->
+<div class="row">
+    <!-- Quick Actions -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                {% if current_user.role.name in ['Admin', 'HR Officer'] %}
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="showAddEmployeeModal()">
+                        <i class="fas fa-user-plus"></i> Add New Employee
+                    </button>
+                    <button class="btn btn-info" onclick="showFaceRegistrationModal()">
+                        <i class="fas fa-camera"></i> Register Face
+                    </button>
+                    <button class="btn btn-success" onclick="showAttendanceModal()">
+                        <i class="fas fa-clock"></i> Mark Attendance
+                    </button>
+                </div>
+                {% else %}
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success btn-lg" onclick="showAttendanceModal()">
+                        <i class="fas fa-camera"></i> Mark My Attendance
+                    </button>
+                    <button class="btn btn-info" onclick="showMyAttendance()">
+                        <i class="fas fa-history"></i> My Attendance History
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-history"></i> Recent Activity</h5>
+            </div>
+            <div class="card-body">
+                <div id="recentActivity" class="loading-spinner">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="activityList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Today's Attendance Overview -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-calendar-day"></i> Today's Attendance</h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="refreshAttendance()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                                <th>Work Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="todayAttendanceTable">
+                            <tr>
+                                <td colspan="6" class="text-center">Loading attendance data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Employee Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEmployeeForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="employeeId" class="form-label">Employee ID</label>
+                                <input type="text" class="form-control" id="employeeId" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="phone">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="department" class="form-label">Department</label>
+                                <input type="text" class="form-control" id="department">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="position" class="form-label">Position</label>
+                                <input type="text" class="form-control" id="position">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="hireDate" class="form-label">Hire Date</label>
+                                <input type="date" class="form-control" id="hireDate" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="salary" class="form-label">Salary</label>
+                                <input type="number" class="form-control" id="salary" step="0.01">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" required>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addEmployee()">Add Employee</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Face Registration Modal -->
+<div class="modal fade" id="faceRegistrationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Register Face</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="employeeSelect" class="form-label">Select Employee</label>
+                    <select class="form-select" id="employeeSelect">
+                        <option value="">Choose an employee...</option>
+                    </select>
+                </div>
+                
+                <div class="camera-container">
+                    <video id="faceVideo" autoplay style="width: 100%; border-radius: 8px;"></video>
+                    <canvas id="faceCanvas" style="display:none;"></canvas>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i> Position your face clearly in front of the camera and click "Capture Face".
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="captureFace()">
+                    <i class="fas fa-camera"></i> Capture Face
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Attendance Modal (reused from index.html) -->
+<div class="modal fade" id="attendanceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mark Attendance</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="camera-container">
+                    <video id="attendanceVideo" autoplay style="width: 100%; border-radius: 8px;"></video>
+                    <canvas id="attendanceCanvas" style="display:none;"></canvas>
+                </div>
+                
+                <div id="attendanceStatus" class="mt-3"></div>
+                
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Processing...</span>
+                    </div>
+                    <p class="mt-2">Recognizing face...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="markAttendance()">
+                    <i class="fas fa-camera"></i> Mark Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let attendanceStream = null;
+let faceStream = null;
+
+// Load dashboard data
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardStats();
+    loadTodayAttendance();
+    loadRecentActivity();
+    loadEmployees();
+});
+
+async function loadDashboardStats() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const report = await apiCall(`/api/reports/daily?date=${today}`);
+        
+        document.getElementById('totalEmployees').textContent = report.total_employees;
+        document.getElementById('presentToday').textContent = report.present;
+        document.getElementById('absentToday').textContent = report.absent;
+        
+        const attendanceRate = report.total_employees > 0 
+            ? Math.round((report.present / report.total_employees) * 100) 
+            : 0;
+        document.getElementById('attendanceRate').textContent = attendanceRate + '%';
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+}
+
+async function loadTodayAttendance() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const attendance = await apiCall(`/api/attendance?date=${today}`);
+        
+        const tbody = document.getElementById('todayAttendanceTable');
+        if (attendance.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No attendance records for today</td></tr>';
+        } else {
+            tbody.innerHTML = attendance.map(record => `
+                <tr>
+                    <td>${record.employee_id}</td>
+                    <td>${record.employee_name}</td>
+                    <td>${record.check_in_time || 'N/A'}</td>
+                    <td>${record.check_out_time || 'N/A'}</td>
+                    <td><span class="badge bg-${getStatusColor(record.status)}">${record.status}</span></td>
+                    <td>${record.work_hours ? record.work_hours.toFixed(2) + ' hrs' : 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Error loading attendance:', error);
+        document.getElementById('todayAttendanceTable').innerHTML = 
+            '<tr><td colspan="6" class="text-center text-danger">Error loading attendance data</td></tr>';
+    }
+}
+
+function getStatusColor(status) {
+    switch(status) {
+        case 'present': return 'success';
+        case 'absent': return 'danger';
+        case 'late': return 'warning';
+        case 'half_day': return 'info';
+        default: return 'secondary';
+    }
+}
+
+async function loadRecentActivity() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const attendance = await apiCall(`/api/attendance?date=${today}`);
+        
+        const activityList = document.getElementById('activityList');
+        const recentActivity = attendance.slice(0, 5);
+        
+        if (recentActivity.length === 0) {
+            activityList.innerHTML = '<p class="text-muted">No recent activity</p>';
+        } else {
+            activityList.innerHTML = recentActivity.map(record => `
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                    <div>
+                        <strong>${record.employee_name}</strong>
+                        <br>
+                        <small class="text-muted">${record.check_in_time ? 'Checked in' : 'Not checked in'}</small>
+                    </div>
+                    <span class="badge bg-${getStatusColor(record.status)}">${record.status}</span>
+                </div>
+            `).join('');
+        }
+        
+        document.getElementById('recentActivity').style.display = 'none';
+    } catch (error) {
+        console.error('Error loading activity:', error);
+        document.getElementById('recentActivity').style.display = 'none';
+        document.getElementById('activityList').innerHTML = '<p class="text-danger">Error loading activity</p>';
+    }
+}
+
+async function loadEmployees() {
+    try {
+        const employees = await apiCall('/api/employees');
+        const select = document.getElementById('employeeSelect');
+        
+        select.innerHTML = '<option value="">Choose an employee...</option>' +
+            employees.map(emp => `
+                <option value="${emp.id}">${emp.name} (${emp.employee_id})</option>
+            `).join('');
+    } catch (error) {
+        console.error('Error loading employees:', error);
+    }
+}
+
+// Modal functions
+function showAddEmployeeModal() {
+    const modal = new bootstrap.Modal(document.getElementById('addEmployeeModal'));
+    modal.show();
+}
+
+function showFaceRegistrationModal() {
+    const modal = new bootstrap.Modal(document.getElementById('faceRegistrationModal'));
+    modal.show();
+    
+    // Start camera
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(s) {
+                faceStream = s;
+                document.getElementById('faceVideo').srcObject = s;
+            })
+            .catch(function(err) {
+                showAlert('Camera access denied', 'danger');
+            });
+    }
+}
+
+function showAttendanceModal() {
+    const modal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+    modal.show();
+    
+    // Start camera
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(s) {
+                attendanceStream = s;
+                document.getElementById('attendanceVideo').srcObject = s;
+            })
+            .catch(function(err) {
+                showAlert('Camera access denied', 'danger');
+            });
+    }
+}
+
+// Action functions
+async function addEmployee() {
+    const formData = {
+        employee_id: document.getElementById('employeeId').value,
+        username: document.getElementById('username').value,
+        first_name: document.getElementById('firstName').value,
+        last_name: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        department: document.getElementById('department').value,
+        position: document.getElementById('position').value,
+        hire_date: document.getElementById('hireDate').value,
+        salary: parseFloat(document.getElementById('salary').value) || 0,
+        password: document.getElementById('password').value
+    };
+    
+    try {
+        await apiCall('/api/employees', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        });
+        
+        showAlert('Employee added successfully!', 'success');
+        bootstrap.Modal.getInstance(document.getElementById('addEmployeeModal')).hide();
+        document.getElementById('addEmployeeForm').reset();
+        loadDashboardStats();
+        loadEmployees();
+    } catch (error) {
+        showAlert('Error adding employee: ' + error.message, 'danger');
+    }
+}
+
+async function captureFace() {
+    const employeeId = document.getElementById('employeeSelect').value;
+    if (!employeeId) {
+        showAlert('Please select an employee', 'warning');
+        return;
+    }
+    
+    const video = document.getElementById('faceVideo');
+    const canvas = document.getElementById('faceCanvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    
+    canvas.toBlob(async function(blob) {
+        const formData = new FormData();
+        formData.append('image', blob, 'face.jpg');
+        
+        try {
+            const response = await fetch(`/api/employees/${employeeId}/face`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showAlert('Face registered successfully!', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('faceRegistrationModal')).hide();
+            } else {
+                showAlert('Error: ' + result.error, 'danger');
+            }
+        } catch (error) {
+            showAlert('Error registering face: ' + error.message, 'danger');
+        }
+    }, 'image/jpeg');
+}
+
+async function markAttendance() {
+    const video = document.getElementById('attendanceVideo');
+    const canvas = document.getElementById('attendanceCanvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    
+    const imageData = canvas.toDataURL('image/jpeg');
+    
+    document.querySelector('.loading-spinner').style.display = 'block';
+    document.getElementById('attendanceStatus').innerHTML = '';
+    
+    try {
+        const result = await apiCall('/api/attendance/mark', {
+            method: 'POST',
+            body: JSON.stringify({ image: imageData })
+        });
+        
+        if (result.success) {
+            const statusDiv = document.getElementById('attendanceStatus');
+            statusDiv.className = 'attendance-status attendance-success';
+            statusDiv.innerHTML = `
+                <i class="fas fa-check-circle fa-3x mb-2"></i>
+                <h4>${result.message}</h4>
+                <p>Type: ${result.type === 'check_in' ? 'Check In' : 'Check Out'}</p>
+                ${result.employee ? `<p>Employee: ${result.employee.name} (${result.employee.employee_id})</p>` : ''}
+            `;
+            
+            setTimeout(() => {
+                bootstrap.Modal.getInstance(document.getElementById('attendanceModal')).hide();
+                loadDashboardStats();
+                loadTodayAttendance();
+                loadRecentActivity();
+            }, 3000);
+        }
+    } catch (error) {
+        const statusDiv = document.getElementById('attendanceStatus');
+        statusDiv.className = 'attendance-status attendance-error';
+        statusDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle fa-3x mb-2"></i>
+            <h4>Error</h4>
+            <p>${error.message}</p>
+        `;
+    } finally {
+        document.querySelector('.loading-spinner').style.display = 'none';
+    }
+}
+
+function refreshAttendance() {
+    loadTodayAttendance();
+    loadDashboardStats();
+    loadRecentActivity();
+}
+
+function showMyAttendance() {
+    // Implementation for showing personal attendance history
+    showAlert('My Attendance feature coming soon!', 'info');
+}
+
+// Cleanup camera streams when modals are closed
+document.getElementById('faceRegistrationModal').addEventListener('hidden.bs.modal', function () {
+    if (faceStream) {
+        faceStream.getTracks().forEach(track => track.stop());
+        faceStream = null;
+    }
+});
+
+document.getElementById('attendanceModal').addEventListener('hidden.bs.modal', function () {
+    if (attendanceStream) {
+        attendanceStream.getTracks().forEach(track => track.stop());
+        attendanceStream = null;
+    }
+    document.getElementById('attendanceStatus').innerHTML = '';
+    document.querySelector('.loading-spinner').style.display = 'none';
+});
+</script>
+{% endblock %}

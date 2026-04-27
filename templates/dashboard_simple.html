@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FRBEAMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .navbar-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .navbar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .navbar-menu a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .table th, .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+        
+        .badge-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .badge-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand"> FRBEAMS</div>
+        <div class="navbar-menu">
+            <a href="/">Home</a>
+            <a href="/logout"> Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1> Dashboard</h1>
+            <p>Facial Recognition Employee Attendance Management System</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalEmployees">-</div>
+                <div class="stat-label">Total Employees</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="presentToday">-</div>
+                <div class="stat-label">Present Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="absentToday">-</div>
+                <div class="stat-label">Absent Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="attendanceRate">-</div>
+                <div class="stat-label">Attendance Rate</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">⚡ Quick Actions</div>
+            <div class="card-body">
+                <button class="btn btn-success" onclick="addEmployee()"> Add Employee</button>
+                <button class="btn btn-info" onclick="registerFace()">📷 Register Face</button>
+                <button class="btn btn-primary" onclick="markAttendance()">Mark Attendance</button>
+                <button class="btn btn-info" onclick="generateReport()">Generate Report</button>
+            </div>
+        </div>
+
+        <!-- Today's Attendance -->
+        <div class="card">
+            <div class="card-header"> Today's Attendance</div>
+            <div class="card-body">
+                <div id="attendanceLoading" class="loading">Loading attendance data...</div>
+                <table class="table" id="attendanceTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Status</th>
+                            <th>Work Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceBody">
+                        <!-- Attendance data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="card">
+            <div class="card-header">🔧 System Status</div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>Face Recognition:</strong> <span id="faceStatus">Checking...</span><br>
+                    <strong>Database:</strong> <span id="dbStatus">Connected</span><br>
+                    <strong>Last Sync:</strong> <span id="lastSync">Just now</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load statistics
+                const reportResponse = await fetch('/api/reports/daily');
+                const reportData = await reportResponse.json();
+                
+                document.getElementById('totalEmployees').textContent = reportData.total_employees;
+                document.getElementById('presentToday').textContent = reportData.present;
+                document.getElementById('absentToday').textContent = reportData.absent;
+                
+                const rate = reportData.total_employees > 0 
+                    ? Math.round((reportData.present / reportData.total_employees) * 100) 
+                    : 0;
+                document.getElementById('attendanceRate').textContent = rate + '%';
+                
+                // Load attendance table
+                const attendanceResponse = await fetch('/api/attendance');
+                const attendanceData = await attendanceResponse.json();
+                
+                const tbody = document.getElementById('attendanceBody');
+                tbody.innerHTML = '';
+                
+                const today = new Date().toISOString().split('T')[0];
+                const todayAttendance = attendanceData.filter(record => record.date === today);
+                
+                if (todayAttendance.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No attendance records for today</td></tr>';
+                } else {
+                    todayAttendance.forEach(record => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${record.employee_id}</td>
+                            <td>${record.employee_name}</td>
+                            <td>${record.check_in_time || 'N/A'}</td>
+                            <td>${record.check_out_time || 'N/A'}</td>
+                            <td><span class="badge badge-${getStatusClass(record.status)}">${record.status}</span></td>
+                            <td>${record.work_hours ? record.work_hours.toFixed(2) + ' hrs' : 'N/A'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+                
+                document.getElementById('attendanceLoading').style.display = 'none';
+                document.getElementById('attendanceTable').style.display = 'table';
+                
+                // Update system status
+                document.getElementById('faceStatus').textContent = 'Active';
+                document.getElementById('lastSync').textContent = new Date().toLocaleTimeString();
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                document.getElementById('attendanceLoading').innerHTML = 
+                    '<div class="alert alert-danger">Error loading data: ' + error.message + '</div>';
+            }
+        }
+        
+        function getStatusClass(status) {
+            switch(status.toLowerCase()) {
+                case 'present': return 'success';
+                case 'absent': return 'danger';
+                case 'late': return 'warning';
+                default: return 'info';
+            }
+        }
+        
+        // Quick action functions
+        function addEmployee() {
+            alert('Add Employee feature would open employee registration form');
+        }
+        
+        function registerFace() {
+            alert('Register Face feature would open face registration interface');
+        }
+        
+        function markAttendance() {
+            window.location.href = '/';
+        }
+        
+        function generateReport() {
+            alert('Generate Report feature would open report generation interface');
+        }
+        
+        // Load data on page load
+        window.onload = function() {
+            loadDashboardData();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadDashboardData, 30000);
+        };
+    </script>
+</body>
+</html>

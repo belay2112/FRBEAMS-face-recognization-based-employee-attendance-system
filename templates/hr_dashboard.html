@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard - FRBEAMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-section h3 {
+            color: #007bff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.1);
+            border: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3e4fe0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #5762f5;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .table th,
+        .table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #1a2fb7 0%, #5799f5 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .table tr:hover {
+            background: rgba(240, 147, 251, 0.1);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .badge-success {
+            background: #28a745;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-danger {
+            background: #3554dc;
+        }
+        
+        .badge-info {
+            background: #007bff;
+        }
+        
+        /* Enhanced Filter Container Styles */
+        .filter-container {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 123, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+        }
+        
+        .filter-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .filter-header h3 {
+            margin: 0 0 0.5rem 0;
+            color: #007bff;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .filter-header p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .filter-grid .filter-group {
+            margin-bottom: 0;
+        }
+        
+        .filter-grid .filter-actions {
+            grid-column: span 1;
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+        
+        /* Record Count Badge */
+        .record-count {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Enhanced Card Header */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid rgba(0, 123, 255, 0.1);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            color: #007bff;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+        
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+        
+        .filter-group select,
+        .filter-group input[type="date"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .filter-group select:focus,
+        .filter-group input[type="date"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        .filter-group input[type="date"] {
+            max-width: 200px;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .filter-actions .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-actions .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Enhanced Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        
+        .table thead th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(0, 123, 255, 0.05);
+            transform: scale(1.01);
+        }
+        
+        .table tbody td {
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .table tbody tr:last-child {
+            border-bottom: none;
+        }
+        
+        /* Date Range Inline Styling */
+        .date-range-inputs {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .date-range-inputs input[type="date"] {
+            flex: 1;
+        }
+        
+        .date-range-inputs span {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        /* Table Responsive */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+        }
+        
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .loading-state i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 2px dashed #e9ecef;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #007bff;
+        }
+        
+        .empty-state h4 {
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+        
+        .empty-state p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Status Badge Enhancements */
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+        }
+        
+        .badge-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+            color: #333;
+        }
+        
+        .badge-info {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #213cd3;
+            box-shadow: 0 0 0 3px rgba(240, 147, 251, 0.1);
+        }
+        
+        .filter-container {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="logo">FRBEAMS</div>
+            
+            <div class="user-info">
+                <div style="font-weight: bold;">HR Officer</div>
+                <div style="font-size: 0.9rem;">{{ current_user.username }}</div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Dashboard</h3>
+                <a href="#dashboard" class="menu-item" onclick="showSection('dashboard')">
+                    <i></i> HR Dashboard
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Attendance</h3>
+                <a href="/view_attendance" class="menu-item">
+                    <i></i> View Attendance
+                </a>
+                <a href="/search_attendance" class="menu-item">
+                    <i>?</i> Search Attendance Records
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Reports</h3>
+                <a href="#generate-report" class="menu-item" onclick="showSection('generate-report')">
+                    <i></i> Generate Report
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>System</h3>
+                <a href="/change_password" class="menu-item">
+                    <i></i> Change Password
+                </a>
+                <a href="/logout" class="menu-item">
+                    <i></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div>
+                    <h1>HR Dashboard</h1>
+                    <p>Human Resources Management</p>
+                </div>
+                <div class="user-info">
+                    <div style="font-weight: bold;">{{ current_user.username }}</div>
+                    <div style="font-size: 0.9rem;">HR Officer</div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div id="dashboard-section">
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number" id="totalEmployees">-</div>
+                        <div class="stat-label">Total Employees</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="presentToday">-</div>
+                        <div class="stat-label">Present Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="absentToday">-</div>
+                        <div class="stat-label">Absent Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="attendanceRate">-</div>
+                        <div class="stat-label">Attendance Rate</div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="content-card">
+                    <div class="card-header">Recent Attendance</div>
+                    <div id="recentAttendance" class="loading">Loading attendance data...</div>
+                    <table class="table" id="attendanceTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceBody">
+                            <!-- Attendance data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- View Attendance Section -->
+            <div id="view-attendance-section" style="display: none;">
+                <!-- Top Filter Bar -->
+                <div class="filter-container" style="margin-bottom: 1.5rem;">
+                    <div class="filter-header">
+                        <h3><i>?</i> Attendance Filters</h3>
+                        <p>Filter attendance records by date, employee, and status</p>
+                    </div>
+                    
+                    <div class="filter-grid">
+                        <div class="filter-group">
+                            <label for="attendanceFilter">Time Period</label>
+                            <select id="attendanceFilter" onchange="updateAttendanceFilter()">
+                                <option value="all">All Records</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                                <option value="custom">Custom Date Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group" id="customDateFilter" style="display: none;">
+                            <label>Date Range</label>
+                            <div class="date-range-inputs">
+                                <input type="date" id="attendanceStartDate" placeholder="Start Date">
+                                <span>to</span>
+                                <input type="date" id="attendanceEndDate" placeholder="End Date">
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="employeeFilter">Employee</label>
+                            <select id="employeeFilter">
+                                <option value="">All Employees</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button class="btn btn-info" onclick="applyAttendanceFilters()">
+                                <i>?</i> Apply Filters
+                            </button>
+                            <button class="btn btn-warning" onclick="clearAttendanceFilters()">
+                                <i>?</i> Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Attendance Records Table -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3><i>?</i> Attendance Records</h3>
+                        <span id="recordCount" class="record-count">Loading...</span>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table" id="attendanceTable">
+                            <thead>
+                                <tr>
+                                    <th><i>?</i> Employee ID</th>
+                                    <th><i>?</i> Name</th>
+                                    <th><i>?</i> Date</th>
+                                    <th><i>?</i> Check In</th>
+                                    <th><i>?</i> Check Out</th>
+                                    <th><i>?</i> Status</th>
+                                    <th><i>?</i> Work Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceRecordsBody">
+                                <!-- Attendance records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Search Attendance Section -->
+            <div id="search-attendance-section" style="display: none;">
+                <!-- Top Search Bar -->
+                <div class="filter-container" style="margin-bottom: 1.5rem;">
+                    <div class="filter-header">
+                        <h3><i>?</i> Search Attendance Records</h3>
+                        <p>Search attendance records by employee, date, and status</p>
+                    </div>
+                    
+                    <div class="filter-grid">
+                        <div class="filter-group">
+                            <label for="searchEmployee">Employee Name/ID</label>
+                            <input type="text" id="searchEmployee" placeholder="Enter name or ID">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="searchDate">Date</label>
+                            <input type="date" id="searchDate">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="searchStatus">Status</label>
+                            <select id="searchStatus">
+                                <option value="">All Status</option>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                                <option value="late">Late</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button class="btn btn-primary" onclick="searchAttendanceRecords()">
+                                <i>?</i> Search
+                            </button>
+                            <button class="btn btn-warning" onclick="clearSearch()">
+                                <i>?</i> Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Search Results Table -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3><i>?</i> Search Results</h3>
+                        <span id="searchRecordCount" class="record-count">Ready to search</span>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table" id="searchTable">
+                            <thead>
+                                <tr>
+                                    <th><i>?</i> Employee ID</th>
+                                    <th><i>?</i> Name</th>
+                                    <th><i>?</i> Date</th>
+                                    <th><i>?</i> Check In</th>
+                                    <th><i>?</i> Check Out</th>
+                                    <th><i>?</i> Status</th>
+                                    <th><i>?</i> Work Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody id="searchResultsBody">
+                                <!-- Search results will be displayed here -->
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <i>?</i>
+                                            <h4>Ready to Search</h4>
+                                            <p>Enter search criteria above and click Search to find attendance records.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Generate Report Section -->
+            <div id="generate-report-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Generate Reports</div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label for="reportType">Report Type</label>
+                            <select id="reportType">
+                                <option value="">Select Report Type</option>
+                                <option value="attendance">Attendance Report</option>
+                                <option value="employee">Employee Report</option>
+                                <option value="leave">Leave Report</option>
+                                <option value="performance">Performance Report</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="reportPeriod">Period</label>
+                            <select id="reportPeriod">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group" id="customDateRange" style="display: none;">
+                            <label>Date Range</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="date" id="reportStartDate" placeholder="Start Date">
+                                <input type="date" id="reportEndDate" placeholder="End Date">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="generateHRReport()">Generate Report</button>
+                    <button class="btn btn-info" onclick="exportReport()">Export to Excel</button>
+                    
+                    <div id="reportContent" style="margin-top: 1rem;">
+                        <!-- Report content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Change Password Section -->
+            <div id="change-password-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Change Password</div>
+                    <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                        <button type="button" class="btn" onclick="showSection('dashboard')">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Show/hide sections
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId + '-section');
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+            
+            // Load data based on section
+            if (sectionId === 'dashboard') {
+                loadDashboardData();
+            } else if (sectionId === 'view-attendance') {
+                loadAttendanceRecords();
+                loadSearchInterface(); // Load employees for dropdown
+            } else if (sectionId === 'search-attendance') {
+                loadSearchInterface();
+            }
+        }
+        
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load real HR dashboard data from database
+                const today = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
+                
+                // Fetch today's attendance data
+                const attendanceResponse = await fetch(`/api/attendance?date=${today}`);
+                const attendanceData = await attendanceResponse.json();
+                
+                // Fetch total employees count
+                const employeesResponse = await fetch('/api/employees');
+                const allEmployees = await employeesResponse.json();
+                
+                if (!attendanceResponse.ok || !employeesResponse.ok) {
+                    throw new Error('Failed to load dashboard data');
+                }
+                
+                // Calculate real statistics
+                const totalEmployees = allEmployees.length;
+                const presentToday = attendanceData.filter(record => record.status === 'present').length;
+                const absentToday = totalEmployees - presentToday;
+                const attendanceRate = totalEmployees > 0 ? ((presentToday / totalEmployees) * 100).toFixed(1) : '0';
+                
+                document.getElementById('totalEmployees').textContent = totalEmployees;
+                document.getElementById('presentToday').textContent = presentToday;
+                document.getElementById('absentToday').textContent = absentToday;
+                document.getElementById('attendanceRate').textContent = attendanceRate + '%';
+                
+                // Load recent attendance
+                const tbody = document.getElementById('attendanceBody');
+                tbody.innerHTML = '';
+                
+                // Update record count
+                const recordCount = document.getElementById('recordCount');
+                recordCount.textContent = `${attendanceData.length} records`;
+                
+                if (attendanceData.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i>?</i>
+                                    <h4>No Attendance Records</h4>
+                                    <p>No attendance records found for today. Check back later or adjust your filters.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    attendanceData.forEach(record => {
+                        const row = document.createElement('tr');
+                        const statusClass = record.status === 'present' ? 'badge-success' : 
+                                         record.status === 'absent' ? 'badge-danger' : 
+                                         record.status === 'late' ? 'badge-warning' : 'badge-info';
+                        
+                        row.innerHTML = `
+                            <td>${record.employee_id}</td>
+                            <td>${record.employee_name}</td>
+                            <td>${record.date}</td>
+                            <td>${record.check_in_time || 'N/A'}</td>
+                            <td>${record.check_out_time || 'N/A'}</td>
+                            <td><span class="badge ${statusClass}">${record.status}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+                
+                document.getElementById('recentAttendance').style.display = 'none';
+                document.getElementById('attendanceTable').style.display = 'table';
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showErrorMessage('Error loading dashboard data: ' + error.message);
+            }
+        }
+        
+        // Load attendance records
+        async function loadAttendanceRecords() {
+            try {
+                // Load real attendance data from database
+                const response = await fetch('/api/attendance');
+                const attendanceData = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load attendance data');
+                }
+                
+                const tbody = document.getElementById('attendanceBody');
+                tbody.innerHTML = '';
+                
+                // Update record count
+                const recordCount = document.getElementById('recordCount');
+                recordCount.textContent = `${attendanceData.length} records`;
+                
+                if (attendanceData.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i>?</i>
+                                    <h4>No Attendance Records</h4>
+                                    <p>No attendance records found. Try adjusting your filters or check back later.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    attendanceData.forEach(record => {
+                        const row = document.createElement('tr');
+                        const statusClass = record.status === 'present' ? 'badge-success' : 
+                                         record.status === 'absent' ? 'badge-danger' : 
+                                         record.status === 'late' ? 'badge-warning' : 'badge-info';
+                        
+                        row.innerHTML = `
+                            <td>${record.employee_id}</td>
+                            <td>${record.employee_name}</td>
+                            <td>${record.date}</td>
+                            <td>${record.check_in_time || 'N/A'}</td>
+                            <td>${record.check_out_time || 'N/A'}</td>
+                            <td><span class="badge ${statusClass}">${record.status}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error loading attendance data:', error);
+                showErrorMessage('Error loading attendance data: ' + error.message);
+            }
+        }
+        
+        // Load search interface
+        async function loadSearchInterface() {
+            try {
+                // Load employees for dropdown
+                const response = await fetch('/api/employees');
+                const employees = await response.json();
+                
+                if (response.ok) {
+                    const employeeFilter = document.getElementById('employeeFilter');
+                    employeeFilter.innerHTML = '<option value="">All Employees</option>';
+                    
+                    employees.forEach(employee => {
+                        const option = document.createElement('option');
+                        option.value = employee.id;
+                        option.textContent = `${employee.first_name} ${employee.last_name} (${employee.employee_id})`;
+                        employeeFilter.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading employees:', error);
+            }
+        }
+        
+        // Update attendance filter
+        function updateAttendanceFilter() {
+            const filter = document.getElementById('attendanceFilter').value;
+            const customDateFilter = document.getElementById('customDateFilter');
+            
+            if (filter === 'custom') {
+                customDateFilter.style.display = 'block';
+            } else {
+                customDateFilter.style.display = 'none';
+            }
+        }
+        
+        // Apply attendance filters
+        async function applyAttendanceFilters() {
+            try {
+                const employeeFilter = document.getElementById('employeeFilter').value;
+                const attendanceFilter = document.getElementById('attendanceFilter').value;
+                const startDate = document.getElementById('attendanceStartDate').value;
+                const endDate = document.getElementById('attendanceEndDate').value;
+                
+                // Build query parameters
+                const params = new URLSearchParams();
+                if (employeeFilter) params.append('employee', employeeFilter);
+                if (attendanceFilter !== 'all') params.append('status', attendanceFilter);
+                if (startDate && endDate) {
+                    params.append('start_date', startDate);
+                    params.append('end_date', endDate);
+                } else if (attendanceFilter === 'today') {
+                    const today = new Date().toISOString().split('T')[0];
+                    params.append('date', today);
+                } else if (attendanceFilter === 'week') {
+                    const today = new Date();
+                    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    params.append('start_date', weekAgo.toISOString().split('T')[0]);
+                    params.append('end_date', today.toISOString().split('T')[0]);
+                }
+                
+                console.log('Applying filters:', {
+                    employee: employeeFilter,
+                    status: attendanceFilter,
+                    start_date: startDate,
+                    end_date: endDate
+                });
+                
+                const response = await fetch(`/api/attendance/search?${params.toString()}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    updateAttendanceTable(data);
+                    showSuccessMessage(`Filters applied: Found ${data.length} records`);
+                } else {
+                    showErrorMessage('Error applying attendance filters');
+                }
+            } catch (error) {
+                console.error('Filter error:', error);
+                showErrorMessage('Error applying attendance filters: ' + error.message);
+            }
+        }
+        
+        // Clear attendance filters
+        function clearAttendanceFilters() {
+            document.getElementById('attendanceFilter').value = 'all';
+            document.getElementById('customDateFilter').style.display = 'none';
+            document.getElementById('employeeFilter').value = '';
+            document.getElementById('attendanceStartDate').value = '';
+            document.getElementById('attendanceEndDate').value = '';
+            
+            // Reload original attendance data
+            loadAttendanceRecords();
+            showSuccessMessage('Filters cleared - Showing all attendance records');
+        }
+        
+        // Search attendance records
+        async function searchAttendanceRecords() {
+            const employee = document.getElementById('searchEmployee').value;
+            const date = document.getElementById('searchDate').value;
+            const status = document.getElementById('searchStatus').value;
+            
+            console.log(`Searching attendance for: Employee=${employee || 'All'}, Date=${date || 'All'}, Status=${status || 'All'}`);
+            
+            try {
+                // Build query parameters
+                const params = new URLSearchParams();
+                if (employee) params.append('employee', employee);
+                if (date) params.append('date', date);
+                if (status && status !== 'all') params.append('status', status);
+                
+                const response = await fetch(`/api/attendance/search?${params.toString()}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    updateSearchResults(data);
+                    showSuccessMessage(`Found ${data.length} attendance records`);
+                } else {
+                    showErrorMessage('Error searching attendance records');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                showErrorMessage('Error searching attendance records: ' + error.message);
+            }
+        }
+        
+        // Clear search
+        function clearSearch() {
+            document.getElementById('searchEmployee').value = '';
+            document.getElementById('searchDate').value = '';
+            document.getElementById('searchStatus').value = '';
+            
+            // Reset search results
+            const tbody = document.getElementById('searchResultsBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i>?</i>
+                            <h4>Ready to Search</h4>
+                            <p>Enter search criteria above and click Search to find attendance records.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Reset record count
+            const recordCount = document.getElementById('searchRecordCount');
+            recordCount.textContent = 'Ready to search';
+            
+            showSuccessMessage('Search cleared');
+        }
+        
+        // Update search results table
+        function updateSearchResults(data) {
+            const tbody = document.getElementById('searchResultsBody');
+            tbody.innerHTML = '';
+            
+            // Update record count
+            const recordCount = document.getElementById('searchRecordCount');
+            recordCount.textContent = `${data.length} results`;
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i>?</i>
+                                <h4>No Results Found</h4>
+                                <p>No attendance records found matching your search criteria. Try adjusting your search terms.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            data.forEach(record => {
+                const row = document.createElement('tr');
+                const statusClass = record.status === 'present' ? 'badge-success' : 
+                                 record.status === 'absent' ? 'badge-danger' : 
+                                 record.status === 'late' ? 'badge-warning' : 'badge-info';
+                
+                row.innerHTML = `
+                    <td>${record.employee_id}</td>
+                    <td>${record.employee_name}</td>
+                    <td>${record.date}</td>
+                    <td>${record.check_in_time || 'N/A'}</td>
+                    <td>${record.check_out_time || 'N/A'}</td>
+                    <td><span class="badge ${statusClass}">${record.status}</span></td>
+                    <td>${record.work_hours}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Update attendance table with search results
+        function updateAttendanceTable(data) {
+            const tbody = document.querySelector('#attendanceTable tbody');
+            tbody.innerHTML = '';
+            
+            // Update record count
+            const recordCount = document.getElementById('recordCount');
+            recordCount.textContent = `${data.length} records`;
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i>?</i>
+                                <h4>No Matching Records</h4>
+                                <p>No attendance records found matching your search criteria. Try adjusting your filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            data.forEach(record => {
+                const row = document.createElement('tr');
+                const statusClass = record.status === 'present' ? 'badge-success' : 
+                                 record.status === 'absent' ? 'badge-danger' : 
+                                 record.status === 'late' ? 'badge-warning' : 'badge-info';
+                
+                row.innerHTML = `
+                    <td>${record.employee_name}</td>
+                    <td>${record.employee_id}</td>
+                    <td>${record.department}</td>
+                    <td>${record.date}</td>
+                    <td>${record.check_in_time || 'N/A'}</td>
+                    <td>${record.check_out_time || 'N/A'}</td>
+                    <td><span class="badge ${statusClass}">${record.status}</span></td>
+                    <td>${record.work_hours}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Update report period
+        document.getElementById('reportPeriod').addEventListener('change', function() {
+            const period = this.value;
+            const customDateRange = document.getElementById('customDateRange');
+            
+            if (period === 'custom') {
+                customDateRange.style.display = 'block';
+            } else {
+                customDateRange.style.display = 'none';
+            }
+        });
+        
+        // Generate HR report
+        function generateHRReport() {
+            const reportType = document.getElementById('reportType').value;
+            const period = document.getElementById('reportPeriod').value;
+            
+            if (!reportType) {
+                alert('Please select a report type');
+                return;
+            }
+            
+            alert(`Generating ${reportType} report for ${period} period`);
+            
+            // Simulate report generation
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>${reportType} Report - ${period}</h4>
+                    <p>Report generated successfully with sample data...</p>
+                </div>
+            `;
+        }
+        
+        // Export report
+        async function exportReport() {
+            const reportType = document.getElementById('reportType').value;
+            const period = document.getElementById('reportPeriod').value;
+            
+            if (!reportType) {
+                alert('Please generate a report first before exporting');
+                return;
+            }
+            
+            // Get the report content
+            const reportContent = document.getElementById('reportContent');
+            if (!reportContent.innerHTML.trim()) {
+                alert('Please generate a report first before exporting');
+                return;
+            }
+            
+            // Create CSV content based on report type
+            let csvContent = '';
+            let filename = '';
+            
+            if (reportType === 'attendance') {
+                // Show loading message
+                const loadingDiv = document.createElement('div');
+                loadingDiv.innerHTML = 'Loading attendance data...';
+                loadingDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; border-radius: 5px; z-index: 9999;';
+                document.body.appendChild(loadingDiv);
+                
+                try {
+                    csvContent = await generateAttendanceCSV();
+                    filename = `attendance_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+                    
+                    // Create and download the file
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    alert(`Attendance report exported successfully as ${filename}`);
+                } catch (error) {
+                    alert('Error generating attendance report: ' + error.message);
+                } finally {
+                    document.body.removeChild(loadingDiv);
+                }
+                return; // Exit early for attendance report
+            } else if (reportType === 'employee') {
+                csvContent = generateEmployeeCSV();
+                filename = `employee_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            } else if (reportType === 'leave') {
+                csvContent = generateLeaveCSV();
+                filename = `leave_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            } else if (reportType === 'performance') {
+                csvContent = generatePerformanceCSV();
+                filename = `performance_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            }
+            
+            // Create and download the file (for non-attendance reports)
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Report exported successfully as ${filename}`);
+        }
+        
+        // Generate CSV content for attendance reports
+        async function generateAttendanceCSV() {
+            let csv = 'Employee ID,Name,Department,Date,Check In,Check Out,Status,Work Hours\n';
+            
+            try {
+                // Get the selected period from the report form
+                const period = document.getElementById('reportPeriod').value;
+                let apiUrl = '/api/attendance';
+                
+                // Add date parameter if specific period is selected
+                if (period !== 'all') {
+                    if (period === 'today') {
+                        const today = new Date().toISOString().split('T')[0];
+                        apiUrl += `?date=${today}`;
+                    } else if (period === 'week') {
+                        // Get start of week (Monday)
+                        const today = new Date();
+                        const monday = new Date(today);
+                        monday.setDate(today.getDate() - today.getDay() + 1);
+                        const startDate = monday.toISOString().split('T')[0];
+                        apiUrl += `?date=${startDate}`;
+                    } else if (period === 'month') {
+                        // Get first day of current month
+                        const today = new Date();
+                        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+                        const startDate = firstDay.toISOString().split('T')[0];
+                        apiUrl += `?date=${startDate}`;
+                    }
+                }
+                
+                // Fetch real attendance data from the database
+                const response = await fetch(apiUrl);
+                const attendanceData = await response.json();
+                
+                if (attendanceData.length === 0) {
+                    csv += 'No attendance records found for the selected period\n';
+                    return csv;
+                }
+                
+                // Process each attendance record
+                attendanceData.forEach(record => {
+                    const checkIn = record.check_in_time || '';
+                    const checkOut = record.check_out_time || '';
+                    const status = record.status || '';
+                    const workHours = record.work_hours || '';
+                    
+                    csv += `${record.employee_id},${record.employee_name},${record.employee?.department || 'N/A'},${record.date},${checkIn},${checkOut},${status},${workHours}\n`;
+                });
+                
+            } catch (error) {
+                console.error('Error generating attendance CSV:', error);
+                csv += 'Error loading attendance data\n';
+            }
+            
+            return csv;
+        }
+        
+        // Generate CSV content for employee reports
+        function generateEmployeeCSV() {
+            let csv = 'Employee ID,First Name,Last Name,Email,Department,Position,Hire Date,Salary,Status\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const employeeData = [
+                { employee_id: 'EMP001', first_name: 'John', last_name: 'Doe', email: 'john.doe@company.com', department: 'IT', position: 'Software Engineer', hire_date: '2023-01-15', salary: 75000, status: 'Active' },
+                { employee_id: 'EMP002', first_name: 'Jane', last_name: 'Smith', email: 'jane.smith@company.com', department: 'HR', position: 'HR Manager', hire_date: '2022-06-01', salary: 65000, status: 'Active' },
+                { employee_id: 'EMP003', first_name: 'Mike', last_name: 'Johnson', email: 'mike.johnson@company.com', department: 'Finance', position: 'Accountant', hire_date: '2023-03-10', salary: 70000, status: 'Active' }
+            ];
+            
+            employeeData.forEach(record => {
+                csv += `${record.employee_id},${record.first_name},${record.last_name},${record.email},${record.department},${record.position},${record.hire_date},${record.salary},${record.status}\n`;
+            });
+            
+            return csv;
+        }
+        
+        // Generate CSV content for leave reports
+        function generateLeaveCSV() {
+            let csv = 'Employee ID,Name,Department,Leave Type,Start Date,End Date,Days,Status,Reason\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const leaveData = [
+                { employee_id: 'EMP001', name: 'John Doe', department: 'IT', leave_type: 'Annual', start_date: '2024-04-10', end_date: '2024-04-12', days: 3, status: 'Approved', reason: 'Family vacation' },
+                { employee_id: 'EMP002', name: 'Jane Smith', department: 'HR', leave_type: 'Sick', start_date: '2024-04-05', end_date: '2024-04-05', days: 1, status: 'Approved', reason: 'Medical appointment' }
+            ];
+            
+            leaveData.forEach(record => {
+                csv += `${record.employee_id},${record.name},${record.department},${record.leave_type},${record.start_date},${record.end_date},${record.days},${record.status},${record.reason}\n`;
+            });
+            
+            return csv;
+        }
+        
+        // Generate CSV content for performance reports
+        function generatePerformanceCSV() {
+            let csv = 'Employee ID,Name,Department,Position,Attendance Rate,Performance Score,Rating\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const performanceData = [
+                { employee_id: 'EMP001', name: 'John Doe', department: 'IT', position: 'Software Engineer', attendance_rate: '95.5%', performance_score: 85, rating: 'Excellent' },
+                { employee_id: 'EMP002', name: 'Jane Smith', department: 'HR', position: 'HR Manager', attendance_rate: '97.8%', performance_score: 92, rating: 'Outstanding' },
+                { employee_id: 'EMP003', name: 'Mike Johnson', department: 'Finance', position: 'Accountant', attendance_rate: '93.2%', performance_score: 78, rating: 'Good' }
+            ];
+            
+            performanceData.forEach(record => {
+                csv += `${record.employee_id},${record.name},${record.department},${record.position},${record.attendance_rate},${record.performance_score},${record.rating}\n`;
+            });
+            
+            return csv;
+        }
+        
+        // Handle password change
+        function handleChangePassword(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            if (data.newPassword !== data.confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+            
+            if (data.newPassword.length < 6) {
+                alert('Password must be at least 6 characters long!');
+                return;
+            }
+            
+            // Simulate password change
+            alert('Password changed successfully!');
+            event.target.reset();
+            showSection('dashboard');
+        }
+        
+        // Load dashboard data on page load
+        window.onload = function() {
+            loadDashboardData();
+        };
+    </script>
+</body>
+</html>

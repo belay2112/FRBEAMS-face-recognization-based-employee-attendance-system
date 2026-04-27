@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Dashboard - FRBEAMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-section h3 {
+            color: #764ba2;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #764ba2;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .table th,
+        .table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .table tr:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            margin-right: 0.25rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        /* Form Styles */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group input[readonly] {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* Bulk Payroll Table Styles */
+        .bulk-input {
+            width: 100%;
+            padding: 0.25rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .bulk-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+        
+        .bulk-input[readonly] {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-weight: 600;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 500px;
+            width: 90%;
+            z-index: 1001;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .filter-container {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .chart-container {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="logo">FRBEAMS</div>
+            
+            <div class="user-info">
+                <div style="font-weight: bold;">Finance Officer</div>
+                <div style="font-size: 0.9rem;">{{ current_user.username }}</div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Dashboard</h3>
+                <a href="#dashboard" class="menu-item" onclick="showSection('dashboard')">
+                    <i></i> Overview
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Payroll</h3>
+                <a href="#create-payroll" class="menu-item" onclick="showSection('create-payroll')">
+                    <i></i> Create Payroll
+                </a>
+                <a href="#generate-payroll" class="menu-item" onclick="showSection('generate-payroll')">
+                    <i></i> Generate Payroll
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>System</h3>
+                <a href="#change-password" class="menu-item" onclick="showSection('change-password')">
+                    <i></i> Change Password
+                </a>
+                <a href="/logout" class="menu-item">
+                    <i></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div>
+                    <h1>Finance Dashboard</h1>
+                    <p>Financial Management & Reports</p>
+                </div>
+                <div class="user-info">
+                    <div style="font-weight: bold;">{{ current_user.username }}</div>
+                    <div style="font-size: 0.9rem;">Finance Officer</div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div id="dashboard-section">
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="totalEmployees">-</div>
+                        <div class="stat-label">Total Employees</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="totalSalary">-</div>
+                        <div class="stat-label">Monthly Payroll</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="presentToday">-</div>
+                        <div class="stat-label">Present Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"></div>
+                        <div class="stat-number" id="absentToday">-</div>
+                        <div class="stat-label">Absent Today</div>
+                    </div>
+                </div>
+                
+                <!-- Financial Overview -->
+                <div class="content-card">
+                    <div class="card-header">Financial Overview</div>
+                    <div class="chart-container">
+                        <canvas id="financialChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payroll Section -->
+            <div id="payroll-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header"> Payroll Management</div>
+                    <div class="card-body">
+                        <!-- Payroll Controls -->
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 20px;">
+                            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <label for="payrollMonth" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Payroll Month</label>
+                                    <input type="month" id="payrollMonth" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                                
+                                <div style="flex: 1; min-width: 200px;">
+                                    <label for="departmentFilter" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Department</label>
+                                    <select id="departmentFilter" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">All Departments</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Human Resource">Human Resource</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="IT">IT</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="Operations">Operations</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                                    <button class="btn btn-primary" onclick="generatePayroll()">Generate Payroll</button>
+                                    <button class="btn btn-success" onclick="exportPayroll()">Export CSV</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payroll Summary -->
+                        <div class="stats-grid" style="margin-bottom: 20px;">
+                            <div class="stat-card">
+                                <div class="stat-icon"></div>
+                                <div class="stat-number" id="payrollEmployees">0</div>
+                                <div class="stat-label">Total Employees</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"></div>
+                                <div class="stat-number" id="totalPayroll">$0</div>
+                                <div class="stat-label">Total Payroll</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"></div>
+                                <div class="stat-number" id="avgSalary">$0</div>
+                                <div class="stat-label">Average Salary</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"></div>
+                                <div class="stat-number" id="payrollStatus">Ready</div>
+                                <div class="stat-label">Status</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payroll Table -->
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee ID</th>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Position</th>
+                                        <th>Base Salary</th>
+                                        <th>Attendance Days</th>
+                                        <th>Overtime Hours</th>
+                                        <th>Deductions</th>
+                                        <th>Net Salary</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payrollBody">
+                                    <tr>
+                                        <td colspan="10" style="text-align: center; padding: 20px;">
+                                            Click "Generate Payroll" to calculate payroll for the selected month
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Create Payroll Section -->
+            <div id="create-payroll-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        Create Payroll
+                        <button class="btn btn-secondary" onclick="backToDashboard()" style="float: right; margin-top: -5px;">
+                            ← Back to Dashboard
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <form id="createPayrollForm" onsubmit="handleCreatePayroll(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="employeeSelect">Select Employee</label>
+                                    <select id="employeeSelect" required>
+                                        <option value="">Choose Employee...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="effectiveDate">Effective Date</label>
+                                    <input type="date" id="effectiveDate" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="basicSalary">Basic Salary ($)</label>
+                                    <input type="number" id="basicSalary" step="0.01" min="0" required placeholder="0.00">
+                                </div>
+                                <div class="form-group">
+                                    <label for="allowance">Allowance ($)</label>
+                                    <input type="number" id="allowance" step="0.01" min="0" placeholder="0.00">
+                                </div>
+                                <div class="form-group">
+                                    <label for="deduction">Deduction ($)</label>
+                                    <input type="number" id="deduction" step="0.01" min="0" placeholder="0.00">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="taxableSalary">Taxable Salary ($)</label>
+                                    <input type="number" id="taxableSalary" step="0.01" min="0" readonly placeholder="Auto-calculated">
+                                </div>
+                                <div class="form-group">
+                                    <label for="incomeTax">Income Tax ($)</label>
+                                    <input type="number" id="incomeTax" step="0.01" min="0" readonly placeholder="Auto-calculated">
+                                </div>
+                                <div class="form-group">
+                                    <label for="grossSalary">Gross Salary ($)</label>
+                                    <input type="number" id="grossSalary" step="0.01" min="0" readonly placeholder="Auto-calculated">
+                                </div>
+                                <div class="form-group">
+                                    <label for="netSalary">Net Salary ($)</label>
+                                    <input type="number" id="netSalary" step="0.01" min="0" readonly placeholder="Auto-calculated">
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success"> Save Payroll</button>
+                                <button type="button" class="btn btn-secondary" onclick="resetCreatePayrollForm()">Reset</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Bulk Payroll Preparation -->
+                        <div style="margin-top: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h4> Prepare All Employees Payroll</h4>
+                                <div>
+                                    <button type="button" class="btn btn-info" onclick="loadBulkPayrollTable()">Load Employees</button>
+                                    <button type="button" class="btn btn-success" onclick="saveAllPayroll()">Save All Payroll</button>
+                                    <button type="button" class="btn btn-secondary" onclick="clearBulkTable()">Clear Table</button>
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="data-table" id="bulkPayrollTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee ID</th>
+                                            <th>Name</th>
+                                            <th>Department</th>
+                                            <th>Position</th>
+                                            <th>Basic Salary ($)</th>
+                                            <th>Allowance ($)</th>
+                                            <th>Deduction ($)</th>
+                                            <th>Gross Salary ($)</th>
+                                            <th>Income Tax ($)</th>
+                                            <th>Net Salary ($)</th>
+                                            <th>Effective Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bulkPayrollBody">
+                                        <tr>
+                                            <td colspan="11" style="text-align: center; padding: 20px;">
+                                                Click "Load Employees" to prepare payroll for all employees
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Generate Payroll Section -->
+            <div id="generate-payroll-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        Generate Payroll Report
+                        <button class="btn btn-secondary" onclick="backToDashboard()" style="float: right; margin-top: -5px;">
+                            ← Back to Dashboard
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Payroll Generation Controls -->
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 20px;">
+                            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <label for="payrollPeriod" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Payroll Period</label>
+                                    <select id="payrollPeriod" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="current">Current Month</option>
+                                        <option value="last">Last Month</option>
+                                        <option value="custom">Custom Date Range</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="flex: 1; min-width: 200px;">
+                                    <label for="departmentFilter" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Department</label>
+                                    <select id="departmentFilter" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">All Departments</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Human Resource">Human Resource</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="IT">IT</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="Operations">Operations</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                                    <button class="btn btn-primary" onclick="generatePayrollReport()">Generate Report</button>
+                                    <button class="btn btn-success" onclick="exportPayrollReport()">Export CSV</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payroll Summary -->
+                        <div class="stats-grid" style="margin-bottom: 20px;">
+                            <div class="stat-card">
+                                <div class="stat-icon"></div>
+                                <div class="stat-number" id="totalGross">$0</div>
+                                <div class="stat-label">Total Gross Salary</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"></div>
+                                <div class="stat-number" id="totalDeductions">$0</div>
+                                <div class="stat-label">Total Deductions</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon"></div>
+                                <div class="stat-number" id="totalNet">$0</div>
+                                <div class="stat-label">Total Net Salary</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payroll Report Table -->
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee ID</th>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Position</th>
+                                        <th>Basic Salary</th>
+                                        <th>Allowance</th>
+                                        <th>Gross Salary</th>
+                                        <th>Deductions</th>
+                                        <th>Income Tax</th>
+                                        <th>Net Salary</th>
+                                        <th>Effective Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payrollReportBody">
+                                    <tr>
+                                        <td colspan="11" style="text-align: center; padding: 20px;">
+                                            Click "Generate Report" to load payroll data
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Attendance Report Section -->
+            <div id="attendance-report-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Attendance Report</div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label for="reportPeriod">Period</label>
+                            <select id="attendanceReportPeriod" onchange="updateAttendanceReport()">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group" id="customDateRange" style="display: none;">
+                            <label>Date Range</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="date" id="attendanceStartDate" placeholder="Start Date">
+                                <input type="date" id="attendanceEndDate" placeholder="End Date">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-info" onclick="generateAttendanceReport()">Generate Report</button>
+                    <button class="btn btn-success" onclick="exportAttendanceReport()">Export to Excel</button>
+                    
+                    <div id="attendanceReportContent" style="margin-top: 1rem;">
+                        <!-- Report content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Salary Report Section -->
+            <div id="salary-report-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Salary Report</div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label for="salaryPeriod">Period</label>
+                            <select id="salaryPeriod" onchange="updateSalaryReport()">
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group" id="salaryCustomDate" style="display: none;">
+                            <label>Date Range</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="date" id="salaryStartDate" placeholder="Start Date">
+                                <input type="date" id="salaryEndDate" placeholder="End Date">
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="departmentFilter">Department</label>
+                            <select id="departmentFilter">
+                                <option value="">All Departments</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Operations">Operations</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="generateSalaryReport()">Generate Report</button>
+                    <button class="btn btn-success" onclick="exportSalaryReport()">Export to Excel</button>
+                    
+                    <div id="salaryReportContent" style="margin-top: 1rem;">
+                        <!-- Salary report content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Expense Report Section -->
+            <div id="expense-report-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Expense Report</div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label for="expensePeriod">Period</label>
+                            <select id="expensePeriod" onchange="updateExpenseReport()">
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group" id="expenseCustomDate" style="display: none;">
+                            <label>Date Range</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="date" id="expenseStartDate" placeholder="Start Date">
+                                <input type="date" id="expenseEndDate" placeholder="End Date">
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="expenseCategory">Category</label>
+                            <select id="expenseCategory">
+                                <option value="">All Categories</option>
+                                <option value="salary">Salaries</option>
+                                <option value="office">Office Supplies</option>
+                                <option value="utilities">Utilities</option>
+                                <option value="travel">Travel</option>
+                                <option value="training">Training</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="generateExpenseReport()">Generate Report</button>
+                    <button class="btn btn-success" onclick="exportExpenseReport()">Export to Excel</button>
+                    
+                    <div id="expenseReportContent" style="margin-top: 1rem;">
+                        <!-- Expense report content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Change Password Modal -->
+            <div id="changePasswordModal" class="modal" style="display: none;">
+                <div class="modal-backdrop" onclick="closeChangePasswordModal()"></div>
+                <div class="modal-content">
+                    <div class="content-card">
+                        <div class="card-header">Change Password</div>
+                        <div class="card-body">
+                            <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+                                <div class="form-group">
+                                    <label for="userId">User ID</label>
+                                    <input type="text" id="userId" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password</label>
+                                    <input type="password" id="currentPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" required>
+                                </div>
+                                <div style="text-align: center; margin-top: 2rem;">
+                                    <button type="submit" class="btn btn-primary">Change Password</button>
+                                    <button type="button" class="btn btn-secondary" onclick="closeChangePasswordModal()" style="margin-left: 1rem;">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+    <script>
+        // Show/hide sections
+        function showSection(sectionId) {
+            // Handle change password as modal
+            if (sectionId === 'change-password') {
+                openChangePasswordModal();
+                return;
+            }
+            
+            // Hide all sections
+            const sections = ['dashboard', 'attendance-report', 'salary-report', 'expense-report'];
+            sections.forEach(section => {
+                const sectionElement = document.getElementById(section + '-section');
+                if (sectionElement) {
+                    sectionElement.style.display = 'none';
+                }
+            });
+            
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId + '-section');
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+            
+            // Update active menu item
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const activeMenuItem = document.querySelector(`a[href="#${sectionId}"]`);
+            if (activeMenuItem) {
+                activeMenuItem.classList.add('active');
+            }
+        }
+        
+        // Modal functions
+        function openChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+        
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+            // Clear form
+            document.getElementById('changePasswordForm').reset();
+        }
+        
+        // Back to Dashboard function
+        function backToDashboard() {
+            // Hide all sections including Create Payroll and Generate Payroll
+            const sections = ['dashboard', 'attendance-report', 'salary-report', 'expense-report', 'create-payroll', 'generate-payroll'];
+            sections.forEach(section => {
+                const sectionElement = document.getElementById(section + '-section');
+                if (sectionElement) {
+                    sectionElement.style.display = 'none';
+                }
+            });
+            
+            // Show dashboard section
+            const dashboardSection = document.getElementById('dashboard-section');
+            if (dashboardSection) {
+                dashboardSection.style.display = 'block';
+            }
+            
+            // Update active menu item
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const activeMenuItem = document.querySelector('a[href="#dashboard"]');
+            if (activeMenuItem) {
+                activeMenuItem.classList.add('active');
+            }
+        }
+        
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Simulate loading finance dashboard data
+                const totalEmployees = 12;
+                const monthlyPayroll = 615000; // Simulated monthly payroll
+                const presentToday = 10;
+                const absentToday = totalEmployees - presentToday;
+                
+                document.getElementById('totalEmployees').textContent = totalEmployees;
+                document.getElementById('totalSalary').textContent = '$' + monthlyPayroll.toLocaleString();
+                document.getElementById('presentToday').textContent = presentToday;
+                document.getElementById('absentToday').textContent = absentToday;
+                
+                // Create simple financial chart
+                createFinancialChart();
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        // Create financial chart
+        function createFinancialChart() {
+            const canvas = document.getElementById('financialChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Simple bar chart data
+            const data = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Monthly Expenses',
+                    data: [45000, 52000, 48000, 51000, 49000, 53000],
+                    backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 1
+                }]
+            };
+            
+            // Create simple chart visualization
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw bars
+            const barWidth = 60;
+            const barSpacing = 20;
+            const maxValue = Math.max(...data.datasets[0].data);
+            const chartHeight = 150;
+            
+            data.datasets[0].data.forEach((value, index) => {
+                const barHeight = (value / maxValue) * chartHeight;
+                const x = index * (barWidth + barSpacing) + 20;
+                const y = canvas.height - barHeight - 20;
+                
+                ctx.fillStyle = data.datasets[0].backgroundColor;
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('$' + value.toLocaleString(), x + barWidth/2, y - 5);
+            });
+        }
+        
+        // Load attendance report interface
+        function loadAttendanceReportInterface() {
+            console.log('Attendance report interface loaded');
+        }
+        
+        // Load salary report interface
+        function loadSalaryReportInterface() {
+            console.log('Salary report interface loaded');
+        }
+        
+        // Load expense report interface
+        function loadExpenseReportInterface() {
+            console.log('Expense report interface loaded');
+        }
+        
+        // Update attendance report
+        document.getElementById('attendanceReportPeriod').addEventListener('change', function() {
+            const period = this.value;
+            const customDateRange = document.getElementById('customDateRange');
+            
+            if (period === 'custom') {
+                customDateRange.style.display = 'block';
+            } else {
+                customDateRange.style.display = 'none';
+            }
+        });
+        
+        // Update salary report
+        document.getElementById('salaryPeriod').addEventListener('change', function() {
+            const period = this.value;
+            const customDate = document.getElementById('salaryCustomDate');
+            
+            if (period === 'custom') {
+                customDate.style.display = 'block';
+            } else {
+                customDate.style.display = 'none';
+            }
+        });
+        
+        // Update expense report
+        document.getElementById('expensePeriod').addEventListener('change', function() {
+            const period = this.value;
+            const customDate = document.getElementById('expenseCustomDate');
+            
+            if (period === 'custom') {
+                customDate.style.display = 'block';
+            } else {
+                customDate.style.display = 'none';
+            }
+        });
+        
+        // Generate attendance report
+        function generateAttendanceReport() {
+            const period = document.getElementById('attendanceReportPeriod').value;
+            alert(`Generating attendance report for ${period} period`);
+            
+            const reportContent = document.getElementById('attendanceReportContent');
+            reportContent.innerHTML = `
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>Attendance Report - ${period}</h4>
+                    <table style="width: 100%; margin-top: 1rem;">
+                        <tr style="background: #667eea; color: white;">
+                            <th>Department</th>
+                            <th>Employees</th>
+                            <th>Present Days</th>
+                            <th>Absent Days</th>
+                            <th>Attendance Rate</th>
+                        </tr>
+                        <tr>
+                            <td>IT</td>
+                            <td>3</td>
+                            <td>85</td>
+                            <td>5</td>
+                            <td>94.4%</td>
+                        </tr>
+                        <tr>
+                            <td>HR</td>
+                            <td>3</td>
+                            <td>88</td>
+                            <td>2</td>
+                            <td>97.8%</td>
+                        </tr>
+                        <tr>
+                            <td>Finance</td>
+                            <td>3</td>
+                            <td>87</td>
+                            <td>3</td>
+                            <td>96.7%</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        }
+        
+        // Export attendance report
+        function exportAttendanceReport() {
+            const period = document.getElementById('attendanceReportPeriod').value;
+            
+            // Create CSV content for attendance report
+            let csvContent = 'Department,Employees,Present Days,Absent Days,Attendance Rate\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const attendanceData = [
+                { department: 'IT', employees: 3, present_days: 85, absent_days: 5, attendance_rate: '94.4%' },
+                { department: 'HR', employees: 3, present_days: 88, absent_days: 2, attendance_rate: '97.8%' },
+                { department: 'Finance', employees: 3, present_days: 87, absent_days: 3, attendance_rate: '96.7%' }
+            ];
+            
+            attendanceData.forEach(record => {
+                csvContent += `${record.department},${record.employees},${record.present_days},${record.absent_days},${record.attendance_rate}\n`;
+            });
+            
+            // Create and download the file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const filename = `finance_attendance_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Finance attendance report exported successfully as ${filename}`);
+        }
+        
+        // Generate salary report
+        function generateSalaryReport() {
+            const period = document.getElementById('salaryPeriod').value;
+            const department = document.getElementById('departmentFilter').value;
+            alert(`Generating salary report for ${period} period${department ? ' for ' + department : ''}`);
+            
+            const reportContent = document.getElementById('salaryReportContent');
+            reportContent.innerHTML = `
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>Salary Report - ${period}</h4>
+                    <table style="width: 100%; margin-top: 1rem;">
+                        <tr style="background: #667eea; color: white;">
+                            <th>Department</th>
+                            <th>Employees</th>
+                            <th>Total Salary</th>
+                            <th>Average Salary</th>
+                            <th>Payroll Date</th>
+                        </tr>
+                        <tr>
+                            <td>IT</td>
+                            <td>3</td>
+                            <td>$210,000</td>
+                            <td>$70,000</td>
+                            <td>April 30, 2024</td>
+                        </tr>
+                        <tr>
+                            <td>HR</td>
+                            <td>3</td>
+                            <td>$195,000</td>
+                            <td>$65,000</td>
+                            <td>April 30, 2024</td>
+                        </tr>
+                        <tr>
+                            <td>Finance</td>
+                            <td>3</td>
+                            <td>$210,000</td>
+                            <td>$70,000</td>
+                            <td>April 30, 2024</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        }
+        
+        // Export salary report
+        function exportSalaryReport() {
+            const period = document.getElementById('salaryPeriod').value;
+            const department = document.getElementById('departmentFilter').value;
+            
+            // Create CSV content for salary report
+            let csvContent = 'Department,Employees,Total Salary,Average Salary,Payroll Date\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const salaryData = [
+                { department: 'IT', employees: 3, total_salary: 210000, average_salary: 70000, payroll_date: 'April 30, 2024' },
+                { department: 'HR', employees: 3, total_salary: 195000, average_salary: 65000, payroll_date: 'April 30, 2024' },
+                { department: 'Finance', employees: 3, total_salary: 210000, average_salary: 70000, payroll_date: 'April 30, 2024' }
+            ];
+            
+            salaryData.forEach(record => {
+                csvContent += `${record.department},${record.employees},${record.total_salary},${record.average_salary},${record.payroll_date}\n`;
+            });
+            
+            // Create and download the file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const filename = `finance_salary_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Finance salary report exported successfully as ${filename}`);
+        }
+        
+        // Generate expense report
+        function generateExpenseReport() {
+            const period = document.getElementById('expensePeriod').value;
+            const category = document.getElementById('expenseCategory').value;
+            alert(`Generating expense report for ${period} period${category ? ' for ' + category : ''}`);
+            
+            const reportContent = document.getElementById('expenseReportContent');
+            reportContent.innerHTML = `
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>Expense Report - ${period}</h4>
+                    <table style="width: 100%; margin-top: 1rem;">
+                        <tr style="background: #667eea; color: white;">
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                        </tr>
+                        <tr>
+                            <td>Salaries</td>
+                            <td>Monthly payroll for all departments</td>
+                            <td>$615,000</td>
+                            <td>April 30, 2024</td>
+                        </tr>
+                        <tr>
+                            <td>Office Supplies</td>
+                            <td>Stationery, equipment, utilities</td>
+                            <td>$45,000</td>
+                            <td>April 30, 2024</td>
+                        </tr>
+                        <tr>
+                            <td>Utilities</td>
+                            <td>Electricity, water, internet</td>
+                            <td>$30,000</td>
+                            <td>April 30, 2024</td>
+                        </tr>
+                        <tr>
+                            <td>Other</td>
+                            <td>Miscellaneous expenses</td>
+                            <td>$30,000</td>
+                            <td>April 30, 2024</td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 8px;">
+                        <h5>Total Expenses: $720,000</h5>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Export expense report
+        function exportExpenseReport() {
+            const period = document.getElementById('expensePeriod').value;
+            const category = document.getElementById('expenseCategory').value;
+            
+            // Create CSV content for expense report
+            let csvContent = 'Category,Description,Amount,Date\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const expenseData = [
+                { category: 'Salaries', description: 'Monthly payroll for all departments', amount: 615000, date: 'April 30, 2024' },
+                { category: 'Office Supplies', description: 'Stationery, equipment, utilities', amount: 45000, date: 'April 30, 2024' },
+                { category: 'Utilities', description: 'Electricity, water, internet', amount: 30000, date: 'April 30, 2024' },
+                { category: 'Other', description: 'Miscellaneous expenses', amount: 15000, date: 'April 30, 2024' }
+            ];
+            
+            // Filter by category if selected
+            const filteredData = category ? expenseData.filter(item => item.category === category) : expenseData;
+            
+            filteredData.forEach(record => {
+                csvContent += `${record.category},${record.description},${record.amount},${record.date}\n`;
+            });
+            
+            // Create and download the file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const filename = `finance_expense_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Finance expense report exported successfully as ${filename}`);
+        }
+        
+        // Handle password change
+        function handleChangePassword(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            if (data.newPassword !== data.confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+            
+            if (data.newPassword.length < 6) {
+                alert('Password must be at least 6 characters long!');
+                return;
+            }
+            
+            // Simulate password change
+            alert('Password changed successfully!');
+            event.target.reset();
+            showSection('dashboard');
+        }
+        
+        // Payroll Functions
+        async function generatePayroll() {
+            const month = document.getElementById('payrollMonth').value;
+            const department = document.getElementById('departmentFilter').value;
+            
+            if (!month) {
+                alert('Please select a payroll month');
+                return;
+            }
+            
+            // Update status
+            document.getElementById('payrollStatus').textContent = 'Calculating...';
+            
+            try {
+                // Fetch employee data
+                const employeesResponse = await fetch('/api/employees');
+                const employees = await employeesResponse.json();
+                
+                // Fetch attendance data for the selected month
+                const [year, monthNum] = month.split('-');
+                const startDate = `${year}-${monthNum}-01`;
+                const endDate = `${year}-${monthNum}-31`;
+                
+                const attendanceResponse = await fetch(`/api/attendance?start_date=${startDate}&end_date=${endDate}`);
+                const attendanceData = await attendanceResponse.json();
+                
+                // Filter employees by department if selected
+                let filteredEmployees = employees;
+                if (department) {
+                    filteredEmployees = employees.filter(emp => emp.department === department);
+                }
+                
+                // Calculate payroll for each employee
+                const payrollData = filteredEmployees.map(employee => {
+                    const employeeAttendance = attendanceData.filter(att => att.employee_id === employee.employee_id);
+                    const presentDays = employeeAttendance.filter(att => att.status === 'present').length;
+                    const overtimeHours = employeeAttendance.reduce((total, att) => total + (att.overtime_hours || 0), 0);
+                    
+                    const baseSalary = employee.salary || 0;
+                    const dailyRate = baseSalary / 30; // Assuming 30 days month
+                    const attendancePay = dailyRate * presentDays;
+                    const overtimePay = overtimeHours * (dailyRate / 8) * 1.5; // 1.5x rate for overtime
+                    const deductions = baseSalary * 0.1; // 10% deductions
+                    const netSalary = attendancePay + overtimePay - deductions;
+                    
+                    return {
+                        employee_id: employee.employee_id,
+                        name: `${employee.first_name} ${employee.last_name}`,
+                        department: employee.department,
+                        position: employee.position,
+                        base_salary: baseSalary,
+                        attendance_days: presentDays,
+                        overtime_hours: overtimeHours,
+                        deductions: deductions,
+                        net_salary: netSalary,
+                        status: presentDays >= 15 ? 'Active' : 'Inactive'
+                    };
+                });
+                
+                // Update payroll table
+                updatePayrollTable(payrollData);
+                
+                // Update summary statistics
+                updatePayrollSummary(payrollData);
+                
+                // Update status
+                document.getElementById('payrollStatus').textContent = 'Completed';
+                
+            } catch (error) {
+                console.error('Error generating payroll:', error);
+                document.getElementById('payrollStatus').textContent = 'Error';
+                alert('Error generating payroll: ' + error.message);
+            }
+        }
+        
+        function updatePayrollTable(payrollData) {
+            const tbody = document.getElementById('payrollBody');
+            tbody.innerHTML = '';
+            
+            if (payrollData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px;">No payroll data found</td></tr>';
+                return;
+            }
+            
+            payrollData.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.employee_id}</td>
+                    <td>${record.name}</td>
+                    <td>${record.department}</td>
+                    <td>${record.position}</td>
+                    <td>$${record.base_salary.toFixed(2)}</td>
+                    <td>${record.attendance_days}</td>
+                    <td>${record.overtime_hours}</td>
+                    <td>$${record.deductions.toFixed(2)}</td>
+                    <td><strong>$${record.net_salary.toFixed(2)}</strong></td>
+                    <td><span class="badge ${record.status === 'Active' ? 'badge-success' : 'badge-warning'}">${record.status}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function updatePayrollSummary(payrollData) {
+            const totalEmployees = payrollData.length;
+            const totalPayroll = payrollData.reduce((sum, record) => sum + record.net_salary, 0);
+            const avgSalary = totalEmployees > 0 ? totalPayroll / totalEmployees : 0;
+            
+            document.getElementById('payrollEmployees').textContent = totalEmployees;
+            document.getElementById('totalPayroll').textContent = `$${totalPayroll.toFixed(2)}`;
+            document.getElementById('avgSalary').textContent = `$${avgSalary.toFixed(2)}`;
+        }
+        
+        function exportPayroll() {
+            const month = document.getElementById('payrollMonth').value;
+            const department = document.getElementById('departmentFilter').value;
+            
+            if (!month) {
+                alert('Please generate payroll first');
+                return;
+            }
+            
+            // Get current table data
+            const tbody = document.getElementById('payrollBody');
+            const rows = tbody.getElementsByTagName('tr');
+            
+            if (rows.length === 0 || rows[0].cells.length === 1) {
+                alert('No payroll data to export');
+                return;
+            }
+            
+            // Create CSV content
+            let csv = 'Employee ID,Name,Department,Position,Base Salary,Attendance Days,Overtime Hours,Deductions,Net Salary,Status\n';
+            
+            for (let row of rows) {
+                if (row.cells.length === 10) {
+                    const rowData = [];
+                    for (let cell of row.cells) {
+                        rowData.push(cell.textContent.replace('$', '').replace(',', '').trim());
+                    }
+                    csv += rowData.join(',') + '\n';
+                }
+            }
+            
+            // Create and download the file
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const filename = `payroll_${month}${department ? '_' + department : ''}.csv`;
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Create Payroll Functions
+        async function handlePayrollSubmit(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('payrollForm');
+            const payrollId = form.getAttribute('data-payroll-id');
+            
+            const formData = {
+                employee_id: document.getElementById('employeeId').value,
+                basic_salary: parseFloat(document.getElementById('basicSalary').value),
+                allowance: parseFloat(document.getElementById('allowance').value),
+                deduction: parseFloat(document.getElementById('deduction').value),
+                effective_date: document.getElementById('effectiveDate').value
+            };
+            
+            try {
+                let response;
+                if (payrollId) {
+                    // Update existing payroll
+                    response = await fetch(`/api/payroll/${payrollId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // Create new payroll
+                    response = await fetch('/api/payroll', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const action = payrollId ? 'updated' : 'created';
+                    alert(`Payroll ${action} successfully!`);
+                    
+                    // Reset form
+                    form.reset();
+                    form.removeAttribute('data-payroll-id');
+                    
+                    // Reset button text
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    submitBtn.textContent = 'Save Payroll';
+                    
+                    // Reload payroll data
+                    loadPayrollEntries();
+                } else {
+                    alert('Error saving payroll: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error saving payroll:', error);
+                alert('Error saving payroll: ' + error.message);
+            }
+        }
+        
+        function resetCreatePayrollForm() {
+            document.getElementById('createPayrollForm').reset();
+            // Clear calculated fields
+            document.getElementById('taxableSalary').value = '';
+            document.getElementById('incomeTax').value = '';
+            document.getElementById('grossSalary').value = '';
+            document.getElementById('netSalary').value = '';
+        }
+        
+        async function loadEmployeesForPayroll() {
+            try {
+                const response = await fetch('/api/employees');
+                const employees = await response.json();
+                
+                const select = document.getElementById('employeeSelect');
+                select.innerHTML = '<option value="">Choose Employee...</option>';
+                
+                employees.forEach(employee => {
+                    const option = document.createElement('option');
+                    option.value = employee.employee_id;
+                    option.textContent = `${employee.employee_id} - ${employee.first_name} ${employee.last_name}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading employees:', error);
+            }
+        }
+        
+        function calculatePayrollFields() {
+            const basicSalary = parseFloat(document.getElementById('basicSalary').value) || 0;
+            const allowance = parseFloat(document.getElementById('allowance').value) || 0;
+            const deduction = parseFloat(document.getElementById('deduction').value) || 0;
+            
+            // Calculate gross salary
+            const grossSalary = basicSalary + allowance;
+            
+            // Calculate taxable salary (gross salary - standard deduction)
+            const taxableSalary = Math.max(0, grossSalary - deduction);
+            
+            // Calculate income tax (simplified tax calculation - 15% for taxable salary)
+            const incomeTax = taxableSalary * 0.15;
+            
+            // Calculate net salary
+            const netSalary = grossSalary - deduction - incomeTax;
+            
+            // Update readonly fields
+            document.getElementById('grossSalary').value = grossSalary.toFixed(2);
+            document.getElementById('taxableSalary').value = taxableSalary.toFixed(2);
+            document.getElementById('incomeTax').value = incomeTax.toFixed(2);
+            document.getElementById('netSalary').value = netSalary.toFixed(2);
+        }
+        
+        function editPayroll(id) {
+            alert('Edit functionality not implemented yet. Payroll ID: ' + id);
+        }
+        
+        // Bulk Payroll Table Functions
+        async function loadBulkPayrollTable() {
+            try {
+                const employeesResponse = await fetch('/api/employees');
+                const employees = await employeesResponse.json();
+                
+                const tbody = document.getElementById('bulkPayrollBody');
+                tbody.innerHTML = '';
+                
+                if (employees.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px;">No employees found</td></tr>';
+                    return;
+                }
+                
+                // Set default effective date to today
+                const today = new Date().toISOString().split('T')[0];
+                
+                employees.forEach((employee, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${employee.employee_id}</td>
+                        <td>${employee.first_name} ${employee.last_name}</td>
+                        <td>${employee.department || 'N/A'}</td>
+                        <td>${employee.position || 'N/A'}</td>
+                        <td>
+                            <input type="number" class="bulk-input" data-field="basic_salary" data-employee="${employee.employee_id}" 
+                                   value="${employee.salary || 0}" step="0.01" min="0" onchange="calculateBulkRow('${employee.employee_id}')">
+                        </td>
+                        <td>
+                            <input type="number" class="bulk-input" data-field="allowance" data-employee="${employee.employee_id}" 
+                                   value="0" step="0.01" min="0" onchange="calculateBulkRow('${employee.employee_id}')">
+                        </td>
+                        <td>
+                            <input type="number" class="bulk-input" data-field="deduction" data-employee="${employee.employee_id}" 
+                                   value="0" step="0.01" min="0" onchange="calculateBulkRow('${employee.employee_id}')">
+                        </td>
+                        <td>
+                            <input type="number" class="bulk-input" data-field="gross_salary" data-employee="${employee.employee_id}" 
+                                   readonly value="0" step="0.01" min="0">
+                        </td>
+                        <td>
+                            <input type="number" class="bulk-input" data-field="income_tax" data-employee="${employee.employee_id}" 
+                                   readonly value="0" step="0.01" min="0">
+                        </td>
+                        <td>
+                            <input type="number" class="bulk-input" data-field="net_salary" data-employee="${employee.employee_id}" 
+                                   readonly value="0" step="0.01" min="0">
+                        </td>
+                        <td>
+                            <input type="date" class="bulk-input" data-field="effective_date" data-employee="${employee.employee_id}" 
+                                   value="${today}" required>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                // Calculate initial values
+                employees.forEach(employee => {
+                    calculateBulkRow(employee.employee_id);
+                });
+                
+            } catch (error) {
+                console.error('Error loading bulk payroll table:', error);
+                alert('Error loading employees: ' + error.message);
+            }
+        }
+        
+        function calculateBulkRow(employeeId) {
+            const basicSalary = parseFloat(document.querySelector(`input[data-employee="${employeeId}"][data-field="basic_salary"]`).value) || 0;
+            const allowance = parseFloat(document.querySelector(`input[data-employee="${employeeId}"][data-field="allowance"]`).value) || 0;
+            const deduction = parseFloat(document.querySelector(`input[data-employee="${employeeId}"][data-field="deduction"]`).value) || 0;
+            
+            // Calculate payroll components
+            const grossSalary = basicSalary + allowance;
+            const taxableSalary = Math.max(0, grossSalary - deduction);
+            const incomeTax = taxableSalary * 0.15;
+            const netSalary = grossSalary - deduction - incomeTax;
+            
+            // Update readonly fields
+            document.querySelector(`input[data-employee="${employeeId}"][data-field="gross_salary"]`).value = grossSalary.toFixed(2);
+            document.querySelector(`input[data-employee="${employeeId}"][data-field="income_tax"]`).value = incomeTax.toFixed(2);
+            document.querySelector(`input[data-employee="${employeeId}"][data-field="net_salary"]`).value = netSalary.toFixed(2);
+        }
+        
+        async function saveAllPayroll() {
+            const rows = document.querySelectorAll('#bulkPayrollBody tr');
+            if (rows.length === 0 || rows[0].cells.length === 1) {
+                alert('Please load employees first');
+                return;
+            }
+            
+            if (!confirm('Save payroll for all employees in the table?')) {
+                return;
+            }
+            
+            try {
+                // Show loading message
+                const loadingDiv = document.createElement('div');
+                loadingDiv.innerHTML = 'Saving payroll for all employees...';
+                loadingDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; border-radius: 5px; z-index: 9999;';
+                document.body.appendChild(loadingDiv);
+                
+                let successCount = 0;
+                let errorCount = 0;
+                
+                // Process each employee row
+                for (const row of rows) {
+                    if (row.cells.length === 1) continue; // Skip "no data" row
+                    
+                    const employeeId = row.querySelector('input[data-employee]').getAttribute('data-employee');
+                    const basicSalary = parseFloat(row.querySelector('input[data-field="basic_salary"]').value) || 0;
+                    const allowance = parseFloat(row.querySelector('input[data-field="allowance"]').value) || 0;
+                    const deduction = parseFloat(row.querySelector('input[data-field="deduction"]').value) || 0;
+                    const effectiveDate = row.querySelector('input[data-field="effective_date"]').value;
+                    
+                    if (!effectiveDate) {
+                        errorCount++;
+                        continue;
+                    }
+                    
+                    try {
+                        const payrollData = {
+                            employee_id: employeeId,
+                            basic_salary: basicSalary,
+                            allowance: allowance,
+                            deduction: deduction,
+                            effective_date: effectiveDate
+                        };
+                        
+                        const response = await fetch('/api/payroll', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payrollData)
+                        });
+                        
+                        const result = await response.json();
+                        if (result.success) {
+                            successCount++;
+                        } else {
+                            errorCount++;
+                            console.error('Error for employee', employeeId, ':', result.error);
+                        }
+                    } catch (error) {
+                        errorCount++;
+                        console.error('Error for employee', employeeId, ':', error);
+                    }
+                }
+                
+                // Remove loading message
+                document.body.removeChild(loadingDiv);
+                
+                // Show results
+                const message = `Payroll creation completed!\n✅ Success: ${successCount} employees\n❌ Errors: ${errorCount} employees`;
+                alert(message);
+                
+                // Clear bulk table after saving (don't keep it displayed)
+                clearBulkTable();
+                
+            } catch (error) {
+                document.body.removeChild(loadingDiv);
+                console.error('Error saving all payroll:', error);
+                alert('Error saving payroll: ' + error.message);
+            }
+        }
+        
+        function clearBulkTable() {
+            const tbody = document.getElementById('bulkPayrollBody');
+            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px;">Click "Load Employees" to prepare payroll for all employees</td></tr>';
+        }
+        
+        // Generate Payroll Functions
+        async function generatePayrollReport() {
+            const period = document.getElementById('payrollPeriod').value;
+            const department = document.getElementById('departmentFilter').value;
+            
+            try {
+                // Show loading message
+                const tbody = document.getElementById('payrollReportBody');
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px;">Loading payroll data...</td></tr>';
+                
+                // Calculate date range based on period
+                let startDate, endDate;
+                const today = new Date();
+                
+                if (period === 'current') {
+                    startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                    endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                } else if (period === 'last') {
+                    startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                    endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+                } else {
+                    // For custom range, you could add date pickers here
+                    startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                    endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                }
+                
+                // Format dates for API
+                const startDateStr = startDate.toISOString().split('T')[0];
+                const endDateStr = endDate.toISOString().split('T')[0];
+                
+                // Fetch payroll data
+                const response = await fetch(`/api/payroll/report?start_date=${startDateStr}&end_date=${endDateStr}&department=${department}`);
+                const payrollData = await response.json();
+                
+                // Update table
+                updatePayrollReportTable(payrollData);
+                
+                // Update summary statistics
+                updatePayrollReportSummary(payrollData);
+                
+            } catch (error) {
+                console.error('Error generating payroll report:', error);
+                const tbody = document.getElementById('payrollReportBody');
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px; color: red;">Error loading payroll data</td></tr>';
+            }
+        }
+        
+        function updatePayrollReportTable(payrollData) {
+            const tbody = document.getElementById('payrollReportBody');
+            tbody.innerHTML = '';
+            
+            if (payrollData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" style="text-align: center; padding: 20px;">No payroll data found for selected period</td></tr>';
+                return;
+            }
+            
+            payrollData.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.employee_id}</td>
+                    <td>${record.full_name}</td>
+                    <td>${record.department || 'N/A'}</td>
+                    <td>${record.position || 'N/A'}</td>
+                    <td>ETB ${parseFloat(record.basic_salary).toFixed(2)}</td>
+                    <td>ETB ${parseFloat(record.allowance).toFixed(2)}</td>
+                    <td>ETB ${parseFloat(record.gross_salary).toFixed(2)}</td>
+                    <td>ETB ${parseFloat(record.deduction).toFixed(2)}</td>
+                    <td>ETB ${parseFloat(record.income_tax).toFixed(2)}</td>
+                    <td><strong>ETB ${parseFloat(record.net_salary).toFixed(2)}</strong></td>
+                    <td>${record.effective_date}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deletePayroll(${record.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function updatePayrollReportSummary(payrollData) {
+            const totalGross = payrollData.reduce((sum, record) => sum + parseFloat(record.gross_salary), 0);
+            const totalDeductions = payrollData.reduce((sum, record) => sum + parseFloat(record.deduction), 0);
+            const totalNet = payrollData.reduce((sum, record) => sum + parseFloat(record.net_salary), 0);
+            
+            document.getElementById('totalGross').textContent = `ETB ${totalGross.toFixed(2)}`;
+            document.getElementById('totalDeductions').textContent = `ETB ${totalDeductions.toFixed(2)}`;
+            document.getElementById('totalNet').textContent = `ETB ${totalNet.toFixed(2)}`;
+        }
+        
+        function exportPayrollReport() {
+            const tbody = document.getElementById('payrollReportBody');
+            const rows = tbody.getElementsByTagName('tr');
+            
+            if (rows.length === 0 || rows[0].cells.length === 1) {
+                alert('No payroll data to export. Please generate a report first.');
+                return;
+            }
+            
+            // Create CSV content
+            let csv = 'Employee ID,Name,Department,Position,Basic Salary,Allowance,Gross Salary,Deductions,Income Tax,Net Salary,Effective Date\n';
+            
+            for (let row of rows) {
+                if (row.cells.length === 11) {
+                    const rowData = [];
+                    for (let cell of row.cells) {
+                        rowData.push(cell.textContent.replace('$', '').replace(',', '').trim());
+                    }
+                    csv += rowData.join(',') + '\n';
+                }
+            }
+            
+            // Create and download the file
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const period = document.getElementById('payrollPeriod').value;
+            const filename = `payroll_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Payroll report exported successfully as ${filename}`);
+        }
+        
+        // Edit Payroll Function
+        async function editPayroll(id) {
+            try {
+                // Fetch payroll data
+                const response = await fetch(`/api/payroll/${id}`);
+                const payroll = await response.json();
+                
+                if (payroll.error) {
+                    alert('Error loading payroll data: ' + payroll.error);
+                    return;
+                }
+                
+                // Populate form with payroll data
+                document.getElementById('employeeId').value = payroll.employee_id;
+                document.getElementById('basicSalary').value = payroll.basic_salary;
+                document.getElementById('allowance').value = payroll.allowance;
+                document.getElementById('deduction').value = payroll.deduction;
+                document.getElementById('effectiveDate').value = payroll.effective_date;
+                
+                // Switch to Create Payroll section
+                showSection('create-payroll');
+                
+                // Change form mode to edit
+                const form = document.getElementById('payrollForm');
+                form.setAttribute('data-payroll-id', id);
+                
+                // Update submit button text
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.textContent = 'Update Payroll';
+                
+                alert('Payroll record loaded for editing. Make changes and click "Update Payroll" to save.');
+                
+            } catch (error) {
+                console.error('Error editing payroll:', error);
+                alert('Error loading payroll data for editing');
+            }
+        }
+        
+        async function deletePayroll(id) {
+            if (!confirm('Are you sure you want to delete this payroll entry?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/payroll/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Payroll entry deleted successfully!');
+                    // Refresh the payroll report table
+                    generatePayrollReport();
+                } else {
+                    alert('Error deleting payroll entry: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error deleting payroll:', error);
+                alert('Error deleting payroll entry');
+            }
+        }
+        
+        // Add event listeners for payroll calculation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calculate payroll when salary fields change
+            document.getElementById('basicSalary').addEventListener('input', calculatePayrollFields);
+            document.getElementById('allowance').addEventListener('input', calculatePayrollFields);
+            document.getElementById('deduction').addEventListener('input', calculatePayrollFields);
+            
+            // Set today's date as default effective date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('effectiveDate').value = today;
+        });
+        
+        // Load dashboard data on page load
+        window.onload = function() {
+            loadDashboardData();
+            loadEmployeesForPayroll();
+        };
+    </script>
+</body>
+</html>

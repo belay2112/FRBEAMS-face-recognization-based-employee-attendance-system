@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Dashboard - FRBEAMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fa709a;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-section h3 {
+            color: #fa709a;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fa709a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #fa709a;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .table th,
+        .table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .table tr:hover {
+            background: rgba(250, 112, 154, 0.1);
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #fa709a;
+            box-shadow: 0 0 0 3px rgba(250, 112, 154, 0.1);
+        }
+        
+        .filter-container {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .chart-container {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .department-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .department-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #fa709a;
+            transition: transform 0.3s ease;
+        }
+        
+        .department-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.3);
+        }
+        
+        .department-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fa709a;
+            margin-bottom: 1rem;
+        }
+        
+        .department-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1rem;
+        }
+        
+        .department-stat {
+            text-align: center;
+        }
+        
+        .department-stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .department-stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="logo">FRBEAMS</div>
+            
+            <div class="user-info">
+                <div style="font-weight: bold;">Department</div>
+                <div style="font-size: 0.9rem;">{{ current_user.username }}</div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Dashboard</h3>
+                <a href="#dashboard" class="menu-item" onclick="showSection('dashboard')">
+                    <i>📊</i> Department Dashboard
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Attendance</h3>
+                <a href="#view-attendance" class="menu-item" onclick="showSection('view-attendance')">
+                    <i>📅</i> View Attendance Report
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Actions</h3>
+                <a href="#save-absence" class="menu-item" onclick="showSection('save-absence')">
+                    <i>🏖</i> Save Absence/Presence
+                </a>
+                <a href="#generate-report" class="menu-item" onclick="showSection('generate-report')">
+                    <i>📈</i> Generate Attendance Report
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>System</h3>
+                <a href="#change-password" class="menu-item" onclick="showSection('change-password')">
+                    <i>🔐</i> Change Password
+                </a>
+                <a href="/logout" class="menu-item">
+                    <i>🚪</i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div>
+                    <h1>Department Dashboard</h1>
+                    <p>Department Management & Analytics</p>
+                </div>
+                <div class="user-info">
+                    <div style="font-weight: bold;">{{ current_user.username }}</div>
+                    <div style="font-size: 0.9rem;">Department</div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div id="dashboard-section">
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-number" id="totalDepartments">-</div>
+                        <div class="stat-label">Total Departments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number" id="totalEmployees">-</div>
+                        <div class="stat-label">Total Employees</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-number" id="presentToday">-</div>
+                        <div class="stat-label">Present Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number" id="avgAttendance">-</div>
+                        <div class="stat-label">Avg Attendance</div>
+                    </div>
+                </div>
+                
+                <!-- Department Overview -->
+                <div class="content-card">
+                    <div class="card-header">Department Overview</div>
+                    <div class="department-grid" id="departmentGrid">
+                        <!-- Department cards will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- View Attendance Section -->
+            <div id="view-attendance-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Attendance Report</div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label for="attendancePeriod">Period</label>
+                            <select id="attendancePeriod" onchange="updateAttendanceView()">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group" id="customDateRange" style="display: none;">
+                            <label>Date Range</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="date" id="attendanceStartDate" placeholder="Start Date">
+                                <input type="date" id="attendanceEndDate" placeholder="End Date">
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="departmentFilter">Department</label>
+                            <select id="departmentFilter">
+                                <option value="">All Departments</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Operations">Operations</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-info" onclick="generateDepartmentReport()">Generate Report</button>
+                    <button class="btn btn-success" onclick="exportDepartmentReport()">Export to Excel</button>
+                    
+                    <div id="attendanceReportContent" style="margin-top: 1rem;">
+                        <!-- Report content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Save Absence Section -->
+            <div id="save-absence-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Save Absence/Presence</div>
+                    
+                    <form id="absenceForm" onsubmit="handleAbsenceSubmission(event)">
+                        <div class="form-group">
+                            <label for="employeeSelect">Employee</label>
+                            <select id="employeeSelect" required>
+                                <option value="">Select Employee</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="absenceType">Type</label>
+                            <select id="absenceType" required>
+                                <option value="">Select Type</option>
+                                <option value="absence">Absence</option>
+                                <option value="presence">Present</option>
+                                <option value="late">Late</option>
+                                <option value="leave">Leave</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="absenceDate">Date</label>
+                            <input type="date" id="absenceDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="absenceReason">Reason</label>
+                            <textarea id="absenceReason" rows="4" placeholder="Enter reason for absence/presence..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Save Record</button>
+                        <button type="button" class="btn" onclick="showSection('dashboard')">Cancel</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Generate Report Section -->
+            <div id="generate-report-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Generate Attendance Report</div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label for="reportType">Report Type</label>
+                            <select id="reportType">
+                                <option value="">Select Report Type</option>
+                                <option value="attendance">Attendance Report</option>
+                                <option value="department">Department Report</option>
+                                <option value="employee">Employee Report</option>
+                                <option value="summary">Summary Report</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="reportPeriod">Period</label>
+                            <select id="reportPeriod">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group" id="customDateRange" style="display: none;">
+                            <label>Date Range</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="date" id="reportStartDate" placeholder="Start Date">
+                                <input type="date" id="reportEndDate" placeholder="End Date">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="generateComprehensiveReport()">Generate Report</button>
+                    <button class="btn btn-info" onclick="exportComprehensiveReport()">Export to Excel</button>
+                    
+                    <div id="reportContent" style="margin-top: 1rem;">
+                        <!-- Report content will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Change Password Section -->
+            <div id="change-password-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">Change Password</div>
+                    <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" required minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                        <button type="button" class="btn" onclick="showSection('dashboard')">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Show/hide sections
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = ['dashboard', 'view-attendance', 'save-absence', 'generate-report', 'change-password'];
+            sections.forEach(section => {
+                const sectionElement = document.getElementById(section + '-section');
+                if (sectionElement) {
+                    sectionElement.style.display = 'none';
+                }
+            });
+            
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId + '-section');
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+            
+            // Load data based on section
+            if (sectionId === 'dashboard') {
+                loadDashboardData();
+            } else if (sectionId === 'view-attendance') {
+                loadAttendanceViewInterface();
+            } else if (sectionId === 'save-absence') {
+                loadAbsenceInterface();
+            } else if (sectionId === 'generate-report') {
+                loadReportInterface();
+            }
+        }
+        
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Simulate loading department dashboard data
+                const departmentData = [
+                    { name: 'IT', employees: 3, present: 28, avg_attendance: 93.3 },
+                    { name: 'HR', employees: 3, present: 88, avg_attendance: 97.8 },
+                    { name: 'Finance', employees: 3, present: 87, avg_attendance: 96.7 },
+                    { name: 'Operations', employees: 1, present: 28, avg_attendance: 93.3 },
+                    { name: 'Marketing', employees: 1, present: 29, avg_attendance: 96.7 },
+                    { name: 'Sales', employees: 1, present: 27, avg_attendance: 90.0 }
+                ];
+                
+                const totalDepartments = departmentData.length;
+                const totalEmployees = departmentData.reduce((sum, dept) => sum + dept.employees, 0);
+                const presentToday = departmentData.reduce((sum, dept) => sum + dept.present, 0);
+                const avgAttendance = (departmentData.reduce((sum, dept) => sum + dept.avg_attendance, 0) / totalDepartments).toFixed(1);
+                
+                document.getElementById('totalDepartments').textContent = totalDepartments;
+                document.getElementById('totalEmployees').textContent = totalEmployees;
+                document.getElementById('presentToday').textContent = presentToday;
+                document.getElementById('avgAttendance').textContent = avgAttendance + '%';
+                
+                // Load department cards
+                const grid = document.getElementById('departmentGrid');
+                grid.innerHTML = '';
+                
+                departmentData.forEach(dept => {
+                    const card = document.createElement('div');
+                    card.className = 'department-card';
+                    card.innerHTML = `
+                        <div class="department-name">${dept.name}</div>
+                        <div class="department-stats">
+                            <div class="department-stat">
+                                <div class="department-stat-number">${dept.employees}</div>
+                                <div class="department-stat-label">Employees</div>
+                            </div>
+                            <div class="department-stat">
+                                <div class="department-stat-number">${dept.present}</div>
+                                <div class="department-stat-label">Present</div>
+                            </div>
+                            <div class="department-stat">
+                                <div class="department-stat-number">${dept.avg_attendance}%</div>
+                                <div class="department-stat-label">Attendance</div>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        // Load attendance view interface
+        function loadAttendanceViewInterface() {
+            console.log('Attendance view interface loaded');
+        }
+        
+        // Load absence interface
+        function loadAbsenceInterface() {
+            console.log('Absence interface loaded');
+        }
+        
+        // Load report interface
+        function loadReportInterface() {
+            console.log('Report interface loaded');
+        }
+        
+        // Update attendance view
+        document.getElementById('attendancePeriod').addEventListener('change', function() {
+            const period = this.value;
+            const customDateRange = document.getElementById('customDateRange');
+            
+            if (period === 'custom') {
+                customDateRange.style.display = 'block';
+            } else {
+                customDateRange.style.display = 'none';
+            }
+        });
+        
+        // Update report period
+        document.getElementById('reportPeriod').addEventListener('change', function() {
+            const period = this.value;
+            const customDateRange = document.getElementById('customDateRange');
+            
+            if (period === 'custom') {
+                customDateRange.style.display = 'block';
+            } else {
+                customDateRange.style.display = 'none';
+            }
+        });
+        
+        // Generate department report
+        function generateDepartmentReport() {
+            const period = document.getElementById('attendancePeriod').value;
+            const department = document.getElementById('departmentFilter').value;
+            alert(`Generating department attendance report for ${period} period${department ? ' for ' + department : ''}`);
+            
+            const reportContent = document.getElementById('attendanceReportContent');
+            reportContent.innerHTML = `
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>Department Attendance Report - ${period}</h4>
+                    <table style="width: 100%; margin-top: 1rem;">
+                        <tr style="background: #fa709a; color: white;">
+                            <th>Department</th>
+                            <th>Employees</th>
+                            <th>Present Days</th>
+                            <th>Absent Days</th>
+                            <th>Attendance Rate</th>
+                        </tr>
+                        <tr>
+                            <td>IT</td>
+                            <td>3</td>
+                            <td>85</td>
+                            <td>5</td>
+                            <td>94.4%</td>
+                        </tr>
+                        <tr>
+                            <td>HR</td>
+                            <td>3</td>
+                            <td>88</td>
+                            <td>2</td>
+                            <td>97.8%</td>
+                        </tr>
+                        <tr>
+                            <td>Finance</td>
+                            <td>3</td>
+                            <td>87</td>
+                            <td>3</td>
+                            <td>96.7%</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        }
+        
+        // Export department report
+        function exportDepartmentReport() {
+            const period = document.getElementById('attendancePeriod').value;
+            const department = document.getElementById('departmentFilter').value;
+            
+            // Create CSV content for department attendance report
+            let csvContent = 'Department,Employees,Present Days,Absent Days,Attendance Rate\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const departmentData = [
+                { department: 'IT', employees: 3, present_days: 85, absent_days: 5, attendance_rate: '94.4%' },
+                { department: 'HR', employees: 3, present_days: 88, absent_days: 2, attendance_rate: '97.8%' },
+                { department: 'Finance', employees: 3, present_days: 87, absent_days: 3, attendance_rate: '96.7%' },
+                { department: 'Operations', employees: 1, present_days: 28, absent_days: 2, attendance_rate: '93.3%' },
+                { department: 'Marketing', employees: 1, present_days: 29, absent_days: 1, attendance_rate: '96.7%' },
+                { department: 'Sales', employees: 1, present_days: 27, absent_days: 3, attendance_rate: '90.0%' }
+            ];
+            
+            // Filter by department if selected
+            const filteredData = department ? departmentData.filter(item => item.department === department) : departmentData;
+            
+            filteredData.forEach(record => {
+                csvContent += `${record.department},${record.employees},${record.present_days},${record.absent_days},${record.attendance_rate}\n`;
+            });
+            
+            // Create and download the file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const filename = `department_attendance_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Department attendance report exported successfully as ${filename}`);
+        }
+        
+        // Handle absence submission
+        function handleAbsenceSubmission(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            alert(`Saving ${data.absenceType} record for employee on ${data.absenceDate}: ${data.absenceReason}`);
+            
+            // Reset form
+            event.target.reset();
+            showSection('dashboard');
+        }
+        
+        // Generate comprehensive report
+        function generateComprehensiveReport() {
+            const reportType = document.getElementById('reportType').value;
+            const period = document.getElementById('reportPeriod').value;
+            
+            if (!reportType) {
+                alert('Please select a report type');
+                return;
+            }
+            
+            alert(`Generating ${reportType} report for ${period} period`);
+            
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = `
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>${reportType} Report - ${period}</h4>
+                    <p>Report generated successfully with comprehensive data...</p>
+                </div>
+            `;
+        }
+        
+        // Export comprehensive report
+        function exportComprehensiveReport() {
+            const reportType = document.getElementById('reportType').value;
+            const period = document.getElementById('reportPeriod').value;
+            
+            if (!reportType) {
+                alert('Please generate a report first before exporting');
+                return;
+            }
+            
+            // Get the report content
+            const reportContent = document.getElementById('reportContent');
+            if (!reportContent.innerHTML.trim()) {
+                alert('Please generate a report first before exporting');
+                return;
+            }
+            
+            // Create CSV content based on report type
+            let csvContent = '';
+            let filename = '';
+            
+            if (reportType === 'attendance') {
+                csvContent = generateDepartmentAttendanceCSV();
+                filename = `department_attendance_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            } else if (reportType === 'department') {
+                csvContent = generateDepartmentSummaryCSV();
+                filename = `department_summary_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            } else if (reportType === 'employee') {
+                csvContent = generateDepartmentEmployeeCSV();
+                filename = `department_employee_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            } else if (reportType === 'summary') {
+                csvContent = generateDepartmentSummaryCSV();
+                filename = `department_comprehensive_report_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+            }
+            
+            // Create and download the file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Department ${reportType} report exported successfully as ${filename}`);
+        }
+        
+        // Generate CSV content for department attendance reports
+        function generateDepartmentAttendanceCSV() {
+            let csv = 'Department,Employee ID,Name,Date,Check In,Check Out,Status,Work Hours\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const attendanceData = [
+                { department: 'IT', employee_id: 'EMP001', name: 'John Doe', date: '2024-04-07', check_in: '09:00', check_out: '17:30', status: 'present', work_hours: 8.5 },
+                { department: 'HR', employee_id: 'EMP002', name: 'Jane Smith', date: '2024-04-07', check_in: '08:45', check_out: '17:15', status: 'present', work_hours: 8.5 },
+                { department: 'Finance', employee_id: 'EMP003', name: 'Mike Johnson', date: '2024-04-07', check_in: '09:15', check_out: '17:45', status: 'present', work_hours: 8.5 }
+            ];
+            
+            attendanceData.forEach(record => {
+                csv += `${record.department},${record.employee_id},${record.name},${record.date},${record.check_in},${record.check_out},${record.status},${record.work_hours}\n`;
+            });
+            
+            return csv;
+        }
+        
+        // Generate CSV content for department summary reports
+        function generateDepartmentSummaryCSV() {
+            let csv = 'Department,Total Employees,Present Today,Absent Today,Attendance Rate,Average Work Hours\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const summaryData = [
+                { department: 'IT', total_employees: 3, present_today: 3, absent_today: 0, attendance_rate: '100%', avg_work_hours: 8.5 },
+                { department: 'HR', total_employees: 3, present_today: 2, absent_today: 1, attendance_rate: '66.7%', avg_work_hours: 8.2 },
+                { department: 'Finance', total_employees: 3, present_today: 3, absent_today: 0, attendance_rate: '100%', avg_work_hours: 8.7 }
+            ];
+            
+            summaryData.forEach(record => {
+                csv += `${record.department},${record.total_employees},${record.present_today},${record.absent_today},${record.attendance_rate},${record.avg_work_hours}\n`;
+            });
+            
+            return csv;
+        }
+        
+        // Generate CSV content for department employee reports
+        function generateDepartmentEmployeeCSV() {
+            let csv = 'Department,Employee ID,Name,Position,Hire Date,Status,Total Attendance Days,Average Daily Hours\n';
+            
+            // Sample data - in real implementation, this would come from the database
+            const employeeData = [
+                { department: 'IT', employee_id: 'EMP001', name: 'John Doe', position: 'Software Engineer', hire_date: '2023-01-15', status: 'Active', total_days: 85, avg_hours: 8.5 },
+                { department: 'HR', employee_id: 'EMP002', name: 'Jane Smith', position: 'HR Manager', hire_date: '2022-06-01', status: 'Active', total_days: 88, avg_hours: 8.2 },
+                { department: 'Finance', employee_id: 'EMP003', name: 'Mike Johnson', position: 'Accountant', hire_date: '2023-03-10', status: 'Active', total_days: 87, avg_hours: 8.7 }
+            ];
+            
+            employeeData.forEach(record => {
+                csv += `${record.department},${record.employee_id},${record.name},${record.position},${record.hire_date},${record.status},${record.total_days},${record.avg_hours}\n`;
+            });
+            
+            return csv;
+        }
+        
+        // Handle password change
+        function handleChangePassword(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            if (data.newPassword !== data.confirmPassword) {
+                alert('New passwords do not match!');
+                return;
+            }
+            
+            if (data.newPassword.length < 6) {
+                alert('Password must be at least 6 characters long!');
+                return;
+            }
+            
+            // Simulate password change
+            alert('Password changed successfully!');
+            event.target.reset();
+            showSection('dashboard');
+        }
+        
+        // Load dashboard data on page load
+        window.onload = function() {
+            loadDashboardData();
+        };
+    </script>
+</body>
+</html>

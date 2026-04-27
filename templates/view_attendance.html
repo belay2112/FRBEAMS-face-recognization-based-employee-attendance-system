@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Attendance - FRBEAMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.1);
+            overflow-y: auto;
+            border-right: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+        
+        .menu-section h3 {
+            color: #007bff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .menu-item:hover {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+        
+        .top-bar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.1);
+            border: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .page-title {
+            color: #007bff;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+                
+        /* Enhanced Table Styles */
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+            border: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid rgba(0, 123, 255, 0.1);
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            color: #007bff;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .record-count {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        
+        .table thead th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(0, 123, 255, 0.05);
+            transform: scale(1.01);
+        }
+        
+        .table tbody td {
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        
+        .table tbody tr:last-child {
+            border-bottom: none;
+        }
+        
+        /* Status Badge Enhancements */
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .badge-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+        
+        .badge-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+            color: #333;
+        }
+        
+        .badge-info {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+            color: white;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 2px dashed #e9ecef;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #007bff;
+        }
+        
+        .empty-state h4 {
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+        
+        .empty-state p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Alert Styles */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+        
+        .alert-error {
+            background: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+        
+            </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="logo">FRBEAMS</div>
+            
+            <div class="user-info">
+                <div style="font-weight: bold;">{{ current_user.username }}</div>
+                <div style="font-size: 0.9rem;">HR Officer</div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Navigation</h3>
+                <a href="/hr_dashboard" class="menu-item">
+                    <i></i> HR Dashboard
+                </a>
+                <a href="/view_attendance" class="menu-item active">
+                    <i></i> View Attendance
+                </a>
+                <a href="/search_attendance" class="menu-item">
+                    <i></i> Search Attendance
+                </a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>System</h3>
+                <a href="/change_password" class="menu-item">
+                    <i></i> Change Password
+                </a>
+                <a href="/logout" class="menu-item">
+                    <i></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div>
+                    <h1 class="page-title">View Attendance Records</h1>
+                    <p style="color: #6c757d; margin-top: 0.5rem;">Browse all attendance records from the database</p>
+                </div>
+                <div class="user-info">
+                    <div style="font-weight: bold;">{{ current_user.username }}</div>
+                    <div style="font-size: 0.9rem;">HR Officer</div>
+                </div>
+            </div>
+            
+            <!-- Attendance Records Table -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3>Attendance Records</h3>
+                    <span id="recordCount" class="record-count">Loading...</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table" id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                                <th>Work Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceRecordsBody">
+                            <!-- Attendance records will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load attendance records
+        async function loadAttendanceRecords() {
+            try {
+                // Load real attendance data from database
+                const response = await fetch('/api/attendance');
+                const attendanceData = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load attendance data');
+                }
+                
+                const tbody = document.getElementById('attendanceRecordsBody');
+                tbody.innerHTML = '';
+                
+                // Update record count
+                const recordCount = document.getElementById('recordCount');
+                recordCount.textContent = `${attendanceData.length} records`;
+                
+                if (attendanceData.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i>?</i>
+                                    <h4>No Attendance Records</h4>
+                                    <p>No attendance records found in the database.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    attendanceData.forEach(record => {
+                        const row = document.createElement('tr');
+                        const statusClass = record.status === 'present' ? 'badge-success' : 
+                                         record.status === 'absent' ? 'badge-danger' : 
+                                         record.status === 'late' ? 'badge-warning' : 'badge-info';
+                        
+                        row.innerHTML = `
+                            <td>${record.employee_id}</td>
+                            <td>${record.employee_name}</td>
+                            <td>${record.date}</td>
+                            <td>${record.check_in_time || 'N/A'}</td>
+                            <td>${record.check_out_time || 'N/A'}</td>
+                            <td><span class="badge ${statusClass}">${record.status}</span></td>
+                            <td>${record.work_hours}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error loading attendance data:', error);
+                const tbody = document.getElementById('attendanceRecordsBody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i>?</i>
+                                <h4>Error Loading Data</h4>
+                                <p>Failed to load attendance records. Please try again.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // Load data on page load
+        window.onload = function() {
+            loadAttendanceRecords();
+        };
+    </script>
+</body>
+</html>
